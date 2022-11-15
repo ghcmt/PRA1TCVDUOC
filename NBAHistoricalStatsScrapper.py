@@ -3,15 +3,18 @@ from bs4 import BeautifulSoup
 import re
 import csv
 import bs4
+import pandas as pd #pels dataframes
+from time import sleep #ho haurem de posar per fer-ho server-friendly
+
 
 
 def get_conference_data(soup, conference):
 
     if(conference == 'Eastern'):
-        id = 'confs_standings_E'
+        id = 'divs_standings_E'
 
     elif(conference == 'Western'):
-        id = 'confs_standings_W'
+        id = 'divs_standings_W'
 
     else:
         return "Error (Bad Conference)"
@@ -139,7 +142,7 @@ def get_nba_aba_league_data(base_link):
         all_seasons.append(season_data)
 
     # Guardem en CSV una part de les dades (Primer dataset)
-    f = csv.writer(open('overallinfo.csv', 'w'))
+    f = csv.writer(open('overallinfo.csv', 'w', encoding = "utf-8"))
     f.writerow(["Season", "League", "Champion", "MVP", "RoY", "Points", "Rebounds", "Assists", "Win Shares"])
 
     for season in all_seasons:
@@ -155,7 +158,7 @@ if __name__ == "__main__":
     seasons_links, season_info = get_nba_aba_league_data(base_link)
 
 
-    f2 = csv.writer(open('seasonsdata.csv', 'w'))
+    f2 = csv.writer(open('seasonsdata.csv', 'w', encoding = "utf-8"))
     f2.writerow(["Season", "League", "Conference", "Team", "Games", "W", "L",
                 "MP", "FG", "FGA", "FG%", "3P", "3PA", "3P%", "2P", "2PA", "2P%", "FT",
                 "FTA", "FT%", "ORB", "DRB", "TRB", "AST", "STL", "BLK", "TOV", "PF", "PTS"])
@@ -178,4 +181,3 @@ if __name__ == "__main__":
 
         for row in data:
             f2.writerow(row)
->>>>>>> e27a14ae09ecdce102a8a52f12e6afccbd7f4bfd
