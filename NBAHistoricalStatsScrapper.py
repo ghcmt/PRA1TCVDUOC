@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
     for link, season_info in zip(seasons_links, season_info):
 
-        page = requests.get(link)
+        page = requests.get(link, headers = {'User-Agent': 'PRA1UOC'}) 
 
         soup = BeautifulSoup(page.text, 'html.parser')
 
