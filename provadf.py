@@ -4,26 +4,28 @@ import pandas as pd
 
 headers = {'user-agent': 'PRA1_cmtorro_xrocaca'}
 
-url = "http://www.basketball-reference.com/leagues/NBA_1992.html"
+url = "http://www.basketball-reference.com/leagues/NBA_2016.html"
 response = requests.get(url, headers=headers)
 nba = BeautifulSoup(response.content, 'html.parser')       
 eastTable = nba.find(name = "table", attrs = {"id" : "divs_standings_E"})
+westTable = nba.find(name = "table", attrs = {"id" : "divs_standings_W"})
 stats = []
-for row in eastTable.find_all('tr')[2:]:
-    team = {}
-    try:
-        team['Name'] = row.find('th', {'data-stat' : 'team_name'}).text
-        team['Wins'] = row.find('td', {'data-stat' : 'wins'}).text
-        team['Losses'] = row.find('td', {'data-stat' : 'losses'}).text
-        team['WinLossPct'] = row.find('td', {'data-stat' : 'win_loss_pct'}).text
-        team['GamesBehind'] = row.find('td', {'data-stat' : 'gb'}).text
-        team['PointsPerGame'] = row.find('td', {'data-stat' : 'pts_per_g'}).text
-        team['PointsAgainstPerGame'] = row.find('td', {'data-stat' : 'opp_pts_per_g'}).text
-        team['SRS'] = row.find('td', {'data-stat' : 'srs'}).text
-        team['Playoffs'] = "Yes" if "*" in team['Name'] else "No"    
-    except AttributeError:
-        continue   
-    stats.append(team)
+cols = ["wins", "losses", "win_loss_pct", "gb", "pts_per_g", "opp_pts_per_g", "srs"]
+tables = [eastTable, westTable]
 
-east = pd.DataFrame(stats)
-east.to_csv("prova.csv", index=False)
+for table in tables:
+    for row in table.find_all('tr')[2:]:
+        team = {}
+        try:
+            team['Year'] = 2016
+            team['Name'] = row.find('th', {'data-stat' : 'team_name'}).text
+            for col in cols:
+                team[col] = row.find('td', {'data-stat' : col}).text
+            team['Playoffs'] = "Yes" if "*" in team['Name'] else "No"
+        except AttributeError:
+            continue   
+        stats.append(team)
+
+
+standings = pd.DataFrame(stats)
+standings.to_csv("prova.csv", index=False)

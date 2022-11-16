@@ -1,15 +1,31 @@
-Name,Wins,Losses,WinLossPct,GamesBehind,PointsPerGame,PointsAgainstPerGame,SRS,Playoffs
-Boston Celtics*,51,31,.622,—,106.6,103.0,3.41,Yes
-New York Knicks*,51,31,.622,—,101.6,97.7,3.67,Yes
-New Jersey Nets*,40,42,.488,11.0,105.4,107.1,-1.54,Yes
-Miami Heat*,38,44,.463,13.0,105.0,109.2,-3.94,Yes
-Philadelphia 76ers,35,47,.427,16.0,101.9,103.2,-1.34,No
-Washington Bullets,25,57,.305,26.0,102.4,106.8,-4.35,No
-Orlando Magic,21,61,.256,30.0,101.6,108.5,-6.52,No
-Chicago Bulls*,67,15,.817,—,109.9,99.5,10.07,Yes
-Cleveland Cavaliers*,57,25,.695,10.0,108.9,103.4,5.34,Yes
-Detroit Pistons*,48,34,.585,19.0,98.9,96.9,2.06,Yes
-Indiana Pacers*,40,42,.488,27.0,112.2,110.3,1.85,Yes
-Atlanta Hawks,38,44,.463,29.0,106.2,107.7,-1.15,No
-Milwaukee Bucks,31,51,.378,36.0,105.0,106.7,-1.46,No
-Charlotte Hornets,31,51,.378,36.0,109.5,113.4,-3.57,No
+Year,Name,wins,losses,win_loss_pct,gb,pts_per_g,opp_pts_per_g,srs,Playoffs
+2016,Toronto Raptors*,56,26,.683,—,102.7,98.2,4.08,Yes
+2016,Boston Celtics*,48,34,.585,8.0,105.7,102.5,2.84,Yes
+2016,New York Knicks,32,50,.390,24.0,98.4,101.1,-2.74,No
+2016,Brooklyn Nets,21,61,.256,35.0,98.6,106.0,-7.12,No
+2016,Philadelphia 76ers,10,72,.122,46.0,97.4,107.6,-9.92,No
+2016,Cleveland Cavaliers*,57,25,.695,—,104.3,98.3,5.45,Yes
+2016,Indiana Pacers*,45,37,.549,12.0,102.2,100.5,1.62,Yes
+2016,Detroit Pistons*,44,38,.537,13.0,102.0,101.4,0.43,Yes
+2016,Chicago Bulls,42,40,.512,15.0,101.6,103.1,-1.46,No
+2016,Milwaukee Bucks,33,49,.402,24.0,99.0,103.2,-3.98,No
+2016,Miami Heat*,48,34,.585,—,100.0,98.4,1.50,Yes
+2016,Atlanta Hawks*,48,34,.585,—,102.8,99.2,3.49,Yes
+2016,Charlotte Hornets*,48,34,.585,—,103.4,100.7,2.36,Yes
+2016,Washington Wizards,41,41,.500,7.0,104.1,104.6,-0.50,No
+2016,Orlando Magic,35,47,.427,13.0,102.1,103.7,-1.68,No
+2016,Oklahoma City Thunder*,55,27,.671,—,110.2,102.9,7.09,Yes
+2016,Portland Trail Blazers*,44,38,.537,11.0,105.1,104.3,0.98,Yes
+2016,Utah Jazz,40,42,.488,15.0,97.7,95.9,1.84,No
+2016,Denver Nuggets,33,49,.402,22.0,101.9,105.0,-2.81,No
+2016,Minnesota Timberwolves,29,53,.354,26.0,102.4,106.0,-3.38,No
+2016,Golden State Warriors*,73,9,.890,—,114.9,104.1,10.38,Yes
+2016,Los Angeles Clippers*,53,29,.646,20.0,104.5,100.2,4.13,Yes
+2016,Sacramento Kings,33,49,.402,40.0,106.6,109.1,-2.32,No
+2016,Phoenix Suns,23,59,.280,50.0,100.9,107.5,-6.32,No
+2016,Los Angeles Lakers,17,65,.207,56.0,97.3,106.9,-8.92,No
+2016,San Antonio Spurs*,67,15,.817,—,103.5,92.9,10.28,Yes
+2016,Dallas Mavericks*,42,40,.512,25.0,102.3,102.6,-0.02,Yes
+2016,Memphis Grizzlies*,42,40,.512,25.0,99.1,101.3,-2.14,Yes
+2016,Houston Rockets*,41,41,.500,26.0,106.5,106.4,0.34,Yes
+2016,New Orleans Pelicans,30,52,.366,37.0,102.7,106.5,-3.56,No
