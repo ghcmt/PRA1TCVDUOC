@@ -6,8 +6,6 @@ import bs4
 import pandas as pd #pels dataframes
 from time import sleep #ho haurem de posar per fer-ho server-friendly
 
-
-
 def get_conference_data(soup, conference):
 
     if(conference == 'Eastern'):
@@ -20,75 +18,60 @@ def get_conference_data(soup, conference):
         return "Error (Bad Conference)"
 
     table_content = soup.find_all('table', {'id': id})
+ 
+    cols = ['wins', 'losses', 'win_loss_pct', 'gb', 'pts_per_g', 'opp_pts_per_g', 'srs']
 
-    rows = table_content[0].find_all('tr')
+    stats = []
+    for row in table_content[0].find_all('tr')[1:]:
+        team = {}
+        try:
+            team['Team'] = row.find('th', {'data-stat' : 'team_name'}).text
 
-    # Eliminem el header de la taula
-    rows.pop(0)
+            for col in cols:
+                team[col] = row.find('td', {'data-stat' : col}).text
+                
+            team['Playoffs'] = "Yes" if "*" in team['Team'] else "No"
+            team['Team'] = team['Team'].replace('*','')
+        except AttributeError:
+            continue   
+        stats.append(team)
 
-    # Llista amb totes les dades dels equips
-    all_teams = []
-
-    # Recorrem cada fila per agafar les seguents dades -> Nom de l'equip, W i L
-    for team in rows:
-        team_data = []
-        team_data.append(conference)
-
-        for element2 in team:
-            if(type(element2.contents[0]) is not bs4.NavigableString):
-                team_data.append(element2.contents[0].contents[0])
-
-            else:
-                team_data.append(element2.contents[0])
-
-            if(len(team_data) >= 4):
-                break
-
-        all_teams.append(team_data)
-    return all_teams
+    return stats
 
 def get_per_game_stats(soup):
+
     table_content = soup.find_all('table', {'id': 'per_game-team'})
 
-    rows = table_content[0].find_all('tr')
+    cols = ['g', 'mp', 'fg', 'fga', 'fg_pct', 'fg3', 'fg3a', 'fg3_pct',
+            'fg2', 'fg2a', 'fg2_pct', 'ft', 'fta', 'ft_pct', 'orb', 'drb',
+            'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts']
 
-    # Eliminem el header de la taula
-    rows.pop(0)
-    # Eliminem el league average
-    rows.pop(-1)
+    stats = []
+    for row in table_content[0].find_all('tr')[1:-1]:
 
-    # Llista amb totes les dades dels equips
-    all_teams = []
+        team = {}
+        try:
+            team['Team'] = (row.find('td', {'data-stat' : 'team'}).text).replace('*','')
 
-    # Recorrem cada fila per agafar les seguents dades -> Nom de l'equip, W i L
-    for team in rows:
-        team_data = []
+            for col in cols:
+                team[col] = row.find('td', {'data-stat' : col}).text
 
-        for element2 in team:
-            if(type(element2.contents[0]) is not bs4.NavigableString):
-                team_data.append(element2.contents[0].contents[0])
+        except AttributeError:
+            continue   
+        stats.append(team)
 
-            else:
-                team_data.append(element2.contents[0])
-
-        team_data.pop(0)
-        all_teams.append(team_data)
-    return all_teams
+    return stats
     
 
 def merge_data(season_data, conference_data, per_game_stats_data):
 
     for per_game_team_stats in per_game_stats_data:
         for conference_team in conference_data:
-
             # Mirem els equips per tal de juntar dades
-            if(conference_team[1] in per_game_team_stats):
-
-                per_game_team_stats.insert(0, season_data[0])
-                per_game_team_stats.insert(1, season_data[1])
-                per_game_team_stats.insert(2, conference_team[0])
-                per_game_team_stats.insert(5, conference_team[2])
-                per_game_team_stats.insert(6, conference_team[3])
+            if(conference_team['Team'] in per_game_team_stats['Team']):
+                per_game_team_stats.update(conference_team)
+                per_game_team_stats['Season'] = season_data[0]
+                per_game_team_stats['League'] = season_data[1]
 
     return per_game_stats_data
 
@@ -99,69 +82,46 @@ def get_nba_aba_league_data(base_link):
     soup = BeautifulSoup(page.text, 'html.parser')
 
     table_content = soup.find_all('table', {'id': 'stats'})
-
-    rows = table_content[0].find_all('tr')
-
-    # Descartem headers
-    rows.pop(0)
-    rows.pop(0)
-
-    # Descartem temporada actual
-    rows.pop(0)
-
-    # Llista per guardar tota la informacio general de les temporades
+ 
     all_seasons = []
-
-    # Llista amb els enllacos de les temporades
+    seasons_info = []
     seasons_links = []
 
-    # Llista amb la informacio necessaria per els enllacos de les temporades (Conte l'any i la lliga)
-    seasons_info = []
+    cols = ['lg_id', 'champion', 'mvp', 'roy', 'pts_leader_name', 
+            'trb_leader_name', 'ast_leader_name', 'ws_leader_name']
 
-    for season in rows:
-        
-        # Llista per agafar les dades d'una sola temporada
-        season_data = []
-        for element in season:
+    for row in table_content[0].find_all('tr')[3:]:
+        season = {}
+        try:
+            season['season'] = row.find('th', {'data-stat' : 'season'}).text
 
-            if(element.contents):
+            for col in cols:
+                season[col] = row.find('td', {'data-stat' : col}).text
+            
+            seasons_links.append(base_link + row.find('a', href=True)['href'])
 
-                # Obtenim el link per entrar a cada temporada
-                link = element.contents[0].get('href')
+        except AttributeError:
+            continue
 
-                if('leagues' in link):
-                    if(base_link+link not in seasons_links):
-                        seasons_links.append(base_link + link)
+        seasons_info.append([season['season'], season['lg_id']])
+        all_seasons.append(season)
 
-                season_data.append(element.contents[0].contents[0])
-
-            else:
-                season_data.append("None")
-
-        seasons_info.append([season_data[0], season_data[1]])
-        all_seasons.append(season_data)
-
-    # Guardem en CSV una part de les dades (Primer dataset)
-    f = csv.writer(open('overallinfo.csv', 'w', encoding = "utf-8"))
-    f.writerow(["Season", "League", "Champion", "MVP", "RoY", "Points", "Rebounds", "Assists", "Win Shares"])
-
-    for season in all_seasons:
-        f.writerow(season)
-
-    return [seasons_links, seasons_info]
+    return [all_seasons, seasons_links, seasons_info]
 
 
+def data_to_csv(data, file_name):
+    df = pd.DataFrame(data)
+    df.to_csv(file_name, index=False)
 
 if __name__ == "__main__":
 
     base_link = 'https://www.basketball-reference.com'
-    seasons_links, season_info = get_nba_aba_league_data(base_link)
+    all_seasons, seasons_links, season_info = get_nba_aba_league_data(base_link)
 
+    data_to_csv(all_seasons, 'overall_info.csv')
 
-    f2 = csv.writer(open('seasonsdata.csv', 'w', encoding = "utf-8"))
-    f2.writerow(["Season", "League", "Conference", "Team", "Games", "W", "L",
-                "MP", "FG", "FGA", "FG%", "3P", "3PA", "3P%", "2P", "2PA", "2P%", "FT",
-                "FTA", "FT%", "ORB", "DRB", "TRB", "AST", "STL", "BLK", "TOV", "PF", "PTS"])
+    seasons_links = ['https://www.basketball-reference.com/leagues/NBA_2019.html']
+    season_info = [["2018-2019", "NBA"]]
 
     for link, season_info in zip(seasons_links, season_info):
 
@@ -171,13 +131,12 @@ if __name__ == "__main__":
 
         eastern_data = get_conference_data(soup, "Eastern")
         western_data = get_conference_data(soup, "Western")
-
+        
         conference_data = eastern_data + western_data
 
         per_game_data = get_per_game_stats(soup)
 
-        
         data = merge_data(season_info, conference_data, per_game_data)
-
-        for row in data:
-            f2.writerow(row)
+        
+        data_to_csv(data, 'seasons_data.csv')
+        
