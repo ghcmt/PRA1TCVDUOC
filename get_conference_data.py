@@ -4,18 +4,6 @@ import pandas as pd
 from time import sleep
 from random import randint
 
-headers = {'user-agent': 'PRA1_cmtorro_xrocaca'}
-
-# Creem una llista on guardarem les estadístiques de la taula per cada temporada:
-stats = []
-
-# Definim les columnes en funció de les de la taula que volem scrapejar:
-cols = ["wins", "losses", "win_loss_pct", "gb", "pts_per_g", "opp_pts_per_g", "srs"]
-
-# Determinem el rang temporal que ens interessa, des de 1950 (quan s'estableix
-# la NBA) fins a l'actualitat. 
-years = [*range(1950, 1955, 1)]
-
 def getStandings(years):
     headers = {'user-agent': 'PRA1_cmtorro_xrocaca'}
     
