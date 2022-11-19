@@ -7,7 +7,7 @@ from random import randint
 import os
 
 
-def NBA_scraper(years):
+def NBA_WNBA_scraper(years):
     headers = {'user-agent': 'PRA1_cmtorro_xrocaca'}
     
     # Creem les llistes on guardarem les dades de cada temporada:
@@ -15,39 +15,55 @@ def NBA_scraper(years):
     pGlist = []
     advlist = []
     
-    for year in years:    
-        # Creem l'objecte Beautiful Soup:
-        url = f"http://www.basketball-reference.com/leagues/NBA_{year}.html"
-        response = requests.get(url, headers=headers)
+    for year in years:
+        print(f"Scraping season {year-1}/{year}")
+        # Creem els objecte Beautiful Soup per les dues lligues:
+        urlNBA = f"http://www.basketball-reference.com/leagues/NBA_{year}.html"
+        response = requests.get(urlNBA, headers=headers)
         nba = BeautifulSoup(response.content, 'html.parser')
         
-        # Cridem a les funcions:
-        print(f"Scraping season {year-1}/{year}")
-        # Comencem agafant les dades de les classificacions:
-        standings = get_standings(nba, year, 
-                      ["divs_standings_E", "divs_standings_W", "divs_standings_"],
-                      ["wins", "losses", "win_loss_pct", "gb", "pts_per_g", "opp_pts_per_g", 
-                       "srs"])
-        stlist.append(standings)
+        urlWNBA = f"https://www.basketball-reference.com/wnba/years/{year}.html"
+        response = requests.get(urlWNBA, headers=headers)
+        wnba = BeautifulSoup(response.content, 'html.parser')
         
-        # Agafem les dades per partit de cada equip:
-        pG = get_per_game_stats(nba, year, 'per_game-team', 
-                           ['g', 'mp', 'fg', 'fga', 'fg_pct', 'fg3', 'fg3a', 'fg3_pct',
-                'fg2', 'fg2a', 'fg2_pct', 'ft', 'fta', 'ft_pct', 'orb', 'drb',
-                'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts'])
-        pGlist.append(pG)
-        
-        # Finalment, recollim les mètriques avançades:
-        adv = get_advanced_stats(nba, year, 'advanced-team', 
-                           ['age', 'wins', 'losses', 'wins_pyth', 'losses_pyth', 'mov', 'sos', 
-                'srs', 'off_rtg', 'def_rtg', 'net_rtg', 'pace', 'fta_per_fga_pct', 
-                'fg3a_per_fga_pct', 'ts_pct', 'efg_pct', 'tov_pct', 'orb_pct', 
-                'ft_rate', 'opp_efg_pct', 'opp_tov_pct', 'drb_pct', 'opp_ft_rate', 
-                'attendance', 'attendance_per_g'])
-        advlist.append(adv)
-        
-        # Deixem descansar al servidor entre temporada i temporada:
-        sleep(randint(5, 10))
+        # Creem la llista per iterar en funció de l'objecte Beautiful Soup:
+        soups = [nba, wnba]
+        for soup in soups:
+            # La WNBA va començar posteriorment a la NBA, així que en els primers
+            # anys no hi haurà estadístiques. Així doncs, mirarem el títol de
+            # l'objecte i en funció d'això cridarem o no a les funcions:
+            title = str(soup.find("title"))
+            if not "Page Not Found" in title:
+                # Cridem a les funcions i comencem agafant les dades de les
+                # classificacions:
+                standings = get_standings(soup, year, 
+                              ["divs_standings_E", "divs_standings_W", 
+                               "divs_standings_", "standings_e", "standings_w"],
+                              ["wins", "losses", "win_loss_pct", "gb", 
+                               "pts_per_g", "opp_pts_per_g"])
+                stlist.append(standings)
+                
+                # Agafem les dades per partit de cada equip:
+                pG = get_per_game_stats(soup, year, 'per_game-team', 
+                                   ['g', 'mp', 'fg', 'fga', 'fg_pct', 'fg3', 
+                                    'fg3a', 'fg3_pct', 'fg2', 'fg2a', 'fg2_pct', 
+                                    'ft', 'fta', 'ft_pct', 'orb', 'drb', 'trb',
+                                    'ast', 'stl', 'blk', 'tov', 'pf', 'pts'])
+                pGlist.append(pG)
+                
+                # Finalment, recollim les mètriques avançades:
+                adv = get_advanced_stats(soup, year, 'advanced-team', 
+                                   ['age', 'wins', 'losses', 'wins_pyth', 
+                                    'losses_pyth', 'mov', 'sos', 'srs', 
+                                    'off_rtg', 'def_rtg', 'net_rtg', 'pace', 
+                                    'fta_per_fga_pct', 'fg3a_per_fga_pct', 
+                                    'ts_pct', 'efg_pct', 'tov_pct', 'orb_pct', 
+                                    'ft_rate', 'opp_efg_pct', 'opp_tov_pct', 
+                                    'drb_pct', 'opp_ft_rate'])
+                advlist.append(adv)
+                
+                # Deixem descansar al servidor entre temporada i temporada:
+                sleep(randint(5, 10))
         
     # Generem els dataframes amb les dades de les temporades desitjades:
     df1 = pd.concat(stlist)
@@ -55,7 +71,7 @@ def NBA_scraper(years):
     df3 = pd.concat(advlist)
     
     # Unim els dataframes a partir de les variables comunes:
-    finalDF = df1.merge(df3, on= ['Season', 'Team', 'wins', 'losses', 'srs']).merge(df2, on = ['Season', 'Team'])
+    finalDF = df1.merge(df3, on= ['Season', 'Team', 'wins', 'losses']).merge(df2, on = ['Season', 'Team'])
     
     # Exportem les dades a csv i les guardem en una nova carpeta:
     csvFolder = os.path.join(os.getcwd(), r'data')
@@ -74,18 +90,23 @@ def NBA_scraper(years):
 def get_standings(soup, year, ids, cols):    
     # Creem una llista on guardarem les estadístiques de la taula per cada temporada:
     stats = []
+    
+    # Busquem el títol de l'objecte BeautifulSoup per determinar la lliga:
+    title = str(soup.find('title'))
         
     # Agafem les taules que ens interessen: conferència est i oest.
     tables = []
     for tableId in ids:
         table = soup.find(name = "table", attrs = {"id" : tableId})
         tables.append(table)
+        print("hola")
+        print(table)
         
     for table in tables:
         # Aquest Try-Catch està pensat per si és una temporada antiga i no
         # hi ha conferències i, per tant, no existeix aquesta taula i no
         # trobaríem cap 'tr'. Per això, fem continue per anar a la següent taula:
-        try:
+        if table is not None:
             # Busquem tots els 'tr' d'aquestes taules, on hi ha les informacions
             # dels equips
             for row in table.find_all('tr'):
@@ -98,6 +119,10 @@ def get_standings(soup, year, ids, cols):
                 try:
                     # Agafem les dades que ens interessen:
                     team['Season'] = f"{year-1}/{year}"
+                    if "WNBA" in title:
+                        team['League'] = "WNBA"
+                    else:
+                        team['League'] = "NBA"
                     team['Team'] = row.find('th', {'data-stat' : 'team_name'}).text
                     for col in cols:
                         team[col] = row.find('td', {'data-stat' : col}).text
@@ -107,8 +132,6 @@ def get_standings(soup, year, ids, cols):
                 
                 # Annexem les dades a la llista que hem creat prèviament:
                 stats.append(team)
-        except AttributeError:
-            continue
 
     # Generem el dataframe amb les estadístiques que hem recollit:
     standings = pd.DataFrame(stats)
@@ -180,6 +203,6 @@ def get_advanced_stats(soup, year, ids, cols):
     advanced['Team'] = advanced['Team'].map(lambda x: x.rstrip('*'))
     return advanced
 
-NBA_scraper(range(1950, 2023, 1))
+NBA_WNBA_scraper(range(1950, 2020, 10))
 
 

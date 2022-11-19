@@ -1,0 +1,176 @@
+Season,League,Team,wins,losses,win_loss_pct,gb,pts_per_g,opp_pts_per_g,Playoffs
+1949/1950,NBA,Minneapolis Lakers,51,17,.750,—,84.1,75.7,Yes
+1949/1950,NBA,Rochester Royals,51,17,.750,—,82.4,74.6,Yes
+1949/1950,NBA,Fort Wayne Pistons,40,28,.588,11.0,79.3,77.9,Yes
+1949/1950,NBA,Chicago Stags,40,28,.588,11.0,78.7,77.1,Yes
+1949/1950,NBA,St. Louis Bombers,26,42,.382,25.0,73.7,76.5,No
+1949/1950,NBA,Syracuse Nationals,51,13,.797,—,84.8,76.7,Yes
+1949/1950,NBA,New York Knicks,40,28,.588,13.0,80.7,78.6,Yes
+1949/1950,NBA,Washington Capitols,32,36,.471,21.0,76.5,77.4,Yes
+1949/1950,NBA,Philadelphia Warriors,26,42,.382,27.0,73.3,76.4,Yes
+1949/1950,NBA,Baltimore Bullets,25,43,.368,28.0,73.1,78.7,No
+1949/1950,NBA,Boston Celtics,22,46,.324,31.0,79.7,82.2,No
+1949/1950,NBA,Indianapolis Olympians,39,25,.609,—,85.8,82.1,Yes
+1949/1950,NBA,Anderson Packers,37,27,.578,2.0,87.3,83.5,Yes
+1949/1950,NBA,Tri-Cities Blackhawks,29,35,.453,10.0,83.0,83.6,Yes
+1949/1950,NBA,Sheboygan Red Skins,22,40,.355,16.0,82.4,87.8,Yes
+1949/1950,NBA,Waterloo Hawks,19,43,.306,19.0,79.4,84.9,No
+1949/1950,NBA,Denver Nuggets,11,51,.177,27.0,77.7,89.2,No
+1959/1960,NBA,Boston Celtics,59,16,.787,—,124.5,116.2,Yes
+1959/1960,NBA,Philadelphia Warriors,49,26,.653,10.0,118.6,116.0,Yes
+1959/1960,NBA,Syracuse Nationals,45,30,.600,14.0,118.9,116.3,Yes
+1959/1960,NBA,New York Knicks,27,48,.360,32.0,117.3,119.6,No
+1959/1960,NBA,St. Louis Hawks,46,29,.613,—,113.4,110.7,Yes
+1959/1960,NBA,Detroit Pistons,30,45,.400,16.0,111.6,115.0,Yes
+1959/1960,NBA,Minneapolis Lakers,25,50,.333,21.0,107.3,111.5,Yes
+1959/1960,NBA,Cincinnati Royals,19,56,.253,27.0,111.1,117.4,No
+1969/1970,NBA,New York Knicks,60,22,.732,—,115.0,105.9,Yes
+1969/1970,NBA,Milwaukee Bucks,56,26,.683,4.0,118.8,114.2,Yes
+1969/1970,NBA,Baltimore Bullets,50,32,.610,10.0,120.7,118.6,Yes
+1969/1970,NBA,Philadelphia 76ers,42,40,.512,18.0,121.9,118.5,Yes
+1969/1970,NBA,Cincinnati Royals,36,46,.439,24.0,117.3,120.2,No
+1969/1970,NBA,Boston Celtics,34,48,.415,26.0,114.9,116.8,No
+1969/1970,NBA,Detroit Pistons,31,51,.378,29.0,112.8,116.1,No
+1969/1970,NBA,Atlanta Hawks,48,34,.585,—,117.6,117.2,Yes
+1969/1970,NBA,Los Angeles Lakers,46,36,.561,2.0,113.7,111.8,Yes
+1969/1970,NBA,Chicago Bulls,39,43,.476,9.0,114.9,116.7,Yes
+1969/1970,NBA,Phoenix Suns,39,43,.476,9.0,119.3,121.1,Yes
+1969/1970,NBA,Seattle SuperSonics,36,46,.439,12.0,116.9,119.5,No
+1969/1970,NBA,San Francisco Warriors,30,52,.366,18.0,111.1,115.6,No
+1969/1970,NBA,San Diego Rockets,27,55,.329,21.0,118.7,121.8,No
+1979/1980,NBA,Boston Celtics,61,21,.744,—,113.5,105.7,Yes
+1979/1980,NBA,Philadelphia 76ers,59,23,.720,2.0,109.1,104.9,Yes
+1979/1980,NBA,Washington Bullets,39,43,.476,22.0,107.0,109.5,Yes
+1979/1980,NBA,New York Knicks,39,43,.476,22.0,114.0,115.1,No
+1979/1980,NBA,New Jersey Nets,34,48,.415,27.0,108.3,109.5,No
+1979/1980,NBA,Atlanta Hawks,50,32,.610,—,104.5,101.6,Yes
+1979/1980,NBA,Houston Rockets,41,41,.500,9.0,110.8,110.6,Yes
+1979/1980,NBA,San Antonio Spurs,41,41,.500,9.0,119.4,119.7,Yes
+1979/1980,NBA,Indiana Pacers,37,45,.451,13.0,111.2,111.9,No
+1979/1980,NBA,Cleveland Cavaliers,37,45,.451,13.0,114.1,113.8,No
+1979/1980,NBA,Detroit Pistons,16,66,.195,34.0,108.9,117.2,No
+1979/1980,NBA,Milwaukee Bucks,49,33,.598,—,110.1,106.1,Yes
+1979/1980,NBA,Kansas City Kings,47,35,.573,2.0,108.0,104.9,Yes
+1979/1980,NBA,Denver Nuggets,30,52,.366,19.0,108.3,112.7,No
+1979/1980,NBA,Chicago Bulls,30,52,.366,19.0,107.5,110.2,No
+1979/1980,NBA,Utah Jazz,24,58,.293,25.0,102.4,108.4,No
+1979/1980,NBA,Los Angeles Lakers,60,22,.732,—,115.1,109.2,Yes
+1979/1980,NBA,Seattle SuperSonics,56,26,.683,4.0,108.5,103.8,Yes
+1979/1980,NBA,Phoenix Suns,55,27,.671,5.0,111.1,107.5,Yes
+1979/1980,NBA,Portland Trail Blazers,38,44,.463,22.0,102.5,103.3,Yes
+1979/1980,NBA,San Diego Clippers,35,47,.427,25.0,107.6,111.7,No
+1979/1980,NBA,Golden State Warriors,24,58,.293,36.0,103.6,108.0,No
+1989/1990,NBA,Philadelphia 76ers,53,29,.646,—,110.2,105.2,Yes
+1989/1990,NBA,Boston Celtics,52,30,.634,1.0,110.0,106.0,Yes
+1989/1990,NBA,New York Knicks,45,37,.549,8.0,108.3,106.9,Yes
+1989/1990,NBA,Washington Bullets,31,51,.378,22.0,107.7,109.9,No
+1989/1990,NBA,Miami Heat,18,64,.220,35.0,100.6,110.3,No
+1989/1990,NBA,New Jersey Nets,17,65,.207,36.0,100.1,108.0,No
+1989/1990,NBA,Detroit Pistons,59,23,.720,—,104.3,98.3,Yes
+1989/1990,NBA,Chicago Bulls,55,27,.671,4.0,109.5,106.2,Yes
+1989/1990,NBA,Milwaukee Bucks,44,38,.537,15.0,106.0,106.8,Yes
+1989/1990,NBA,Cleveland Cavaliers,42,40,.512,17.0,102.6,102.9,Yes
+1989/1990,NBA,Indiana Pacers,42,40,.512,17.0,109.3,109.1,Yes
+1989/1990,NBA,Atlanta Hawks,41,41,.500,18.0,108.5,107.5,No
+1989/1990,NBA,Orlando Magic,18,64,.220,41.0,110.9,119.8,No
+1989/1990,NBA,San Antonio Spurs,56,26,.683,—,106.3,102.8,Yes
+1989/1990,NBA,Utah Jazz,55,27,.671,1.0,106.8,102.0,Yes
+1989/1990,NBA,Dallas Mavericks,47,35,.573,9.0,102.2,102.2,Yes
+1989/1990,NBA,Denver Nuggets,43,39,.524,13.0,114.6,113.2,Yes
+1989/1990,NBA,Houston Rockets,41,41,.500,15.0,106.7,105.3,Yes
+1989/1990,NBA,Minnesota Timberwolves,22,60,.268,34.0,95.2,99.4,No
+1989/1990,NBA,Charlotte Hornets,19,63,.232,37.0,100.4,108.2,No
+1989/1990,NBA,Los Angeles Lakers,63,19,.768,—,110.7,103.9,Yes
+1989/1990,NBA,Portland Trail Blazers,59,23,.720,4.0,114.2,107.9,Yes
+1989/1990,NBA,Phoenix Suns,54,28,.659,9.0,114.9,107.8,Yes
+1989/1990,NBA,Seattle SuperSonics,41,41,.500,22.0,106.9,105.9,No
+1989/1990,NBA,Golden State Warriors,37,45,.451,26.0,116.3,119.4,No
+1989/1990,NBA,Los Angeles Clippers,30,52,.366,33.0,103.8,107.2,No
+1989/1990,NBA,Sacramento Kings,23,59,.280,40.0,101.7,106.8,No
+1999/2000,NBA,Miami Heat,52,30,.634,—,94.4,91.3,Yes
+1999/2000,NBA,New York Knicks,50,32,.610,2.0,92.1,90.7,Yes
+1999/2000,NBA,Philadelphia 76ers,49,33,.598,3.0,94.8,93.4,Yes
+1999/2000,NBA,Orlando Magic,41,41,.500,11.0,100.1,99.4,No
+1999/2000,NBA,Boston Celtics,35,47,.427,17.0,99.3,100.1,No
+1999/2000,NBA,New Jersey Nets,31,51,.378,21.0,98.0,99.0,No
+1999/2000,NBA,Washington Wizards,29,53,.354,23.0,96.6,99.9,No
+1999/2000,NBA,Indiana Pacers,56,26,.683,—,101.3,96.7,Yes
+1999/2000,NBA,Charlotte Hornets,49,33,.598,7.0,98.4,95.8,Yes
+1999/2000,NBA,Toronto Raptors,45,37,.549,11.0,97.2,97.3,Yes
+1999/2000,NBA,Detroit Pistons,42,40,.512,14.0,103.5,102.0,Yes
+1999/2000,NBA,Milwaukee Bucks,42,40,.512,14.0,101.2,101.0,Yes
+1999/2000,NBA,Cleveland Cavaliers,32,50,.390,24.0,97.0,100.5,No
+1999/2000,NBA,Atlanta Hawks,28,54,.341,28.0,94.3,99.7,No
+1999/2000,NBA,Chicago Bulls,17,65,.207,39.0,84.8,94.2,No
+1999/2000,NBA,Utah Jazz,55,27,.671,—,96.5,92.0,Yes
+1999/2000,NBA,San Antonio Spurs,53,29,.646,2.0,96.2,90.2,Yes
+1999/2000,NBA,Minnesota Timberwolves,50,32,.610,5.0,98.5,96.0,Yes
+1999/2000,NBA,Dallas Mavericks,40,42,.488,15.0,101.4,102.0,No
+1999/2000,NBA,Denver Nuggets,35,47,.427,20.0,99.0,101.1,No
+1999/2000,NBA,Houston Rockets,34,48,.415,21.0,99.5,100.3,No
+1999/2000,NBA,Vancouver Grizzlies,22,60,.268,33.0,93.9,99.5,No
+1999/2000,NBA,Los Angeles Lakers,67,15,.817,—,100.8,92.3,Yes
+1999/2000,NBA,Portland Trail Blazers,59,23,.720,8.0,97.5,91.0,Yes
+1999/2000,NBA,Phoenix Suns,53,29,.646,14.0,98.9,93.7,Yes
+1999/2000,NBA,Seattle SuperSonics,45,37,.549,22.0,99.1,98.1,Yes
+1999/2000,NBA,Sacramento Kings,44,38,.537,23.0,105.0,102.0,Yes
+1999/2000,NBA,Golden State Warriors,19,63,.232,48.0,95.5,103.8,No
+1999/2000,NBA,Los Angeles Clippers,15,67,.183,52.0,92.0,103.5,No
+1999/2000,WNBA,New York Liberty,20,12,.625,—,67.1,63.6,Yes
+1999/2000,WNBA,Cleveland Rockers,17,15,.531,3.0,68.3,66.3,Yes
+1999/2000,WNBA,Orlando Miracle,16,16,.500,4.0,69.0,69.8,Yes
+1999/2000,WNBA,Washington Mystics,14,18,.438,6.0,68.0,69.4,Yes
+1999/2000,WNBA,Detroit Shock,14,18,.438,6.0,72.8,75.8,No
+1999/2000,WNBA,Miami Sol,13,19,.406,7.0,57.2,62.5,No
+1999/2000,WNBA,Indiana Fever,9,23,.281,11.0,69.2,71.6,No
+1999/2000,WNBA,Charlotte Sting,8,24,.250,12.0,68.3,75.9,No
+1999/2000,WNBA,Los Angeles Sparks,28,4,.875,—,75.5,67.8,Yes
+1999/2000,WNBA,Houston Comets,27,5,.844,1.0,77.3,64.6,Yes
+1999/2000,WNBA,Sacramento Monarchs,21,11,.656,7.0,73.2,68.0,Yes
+1999/2000,WNBA,Phoenix Mercury,20,12,.625,8.0,70.1,65.7,Yes
+1999/2000,WNBA,Utah Starzz,18,14,.563,10.0,75.4,75.2,No
+1999/2000,WNBA,Minnesota Lynx,15,17,.469,13.0,68.5,68.4,No
+1999/2000,WNBA,Portland Fire,10,22,.313,18.0,67.3,72.0,No
+1999/2000,WNBA,Seattle Storm,6,26,.188,22.0,56.9,67.8,No
+2009/2010,NBA,Boston Celtics,50,32,.610,—,99.2,95.6,Yes
+2009/2010,NBA,Toronto Raptors,40,42,.488,10.0,104.1,105.9,No
+2009/2010,NBA,New York Knicks,29,53,.354,21.0,102.1,105.9,No
+2009/2010,NBA,Philadelphia 76ers,27,55,.329,23.0,97.7,101.6,No
+2009/2010,NBA,New Jersey Nets,12,70,.146,38.0,92.4,101.5,No
+2009/2010,NBA,Cleveland Cavaliers,61,21,.744,—,102.1,95.6,Yes
+2009/2010,NBA,Milwaukee Bucks,46,36,.561,15.0,97.7,96.0,Yes
+2009/2010,NBA,Chicago Bulls,41,41,.500,20.0,97.5,99.1,Yes
+2009/2010,NBA,Indiana Pacers,32,50,.390,29.0,100.8,103.8,No
+2009/2010,NBA,Detroit Pistons,27,55,.329,34.0,94.0,99.1,No
+2009/2010,NBA,Orlando Magic,59,23,.720,—,102.8,95.3,Yes
+2009/2010,NBA,Atlanta Hawks,53,29,.646,6.0,101.7,97.0,Yes
+2009/2010,NBA,Miami Heat,47,35,.573,12.0,96.5,94.2,Yes
+2009/2010,NBA,Charlotte Bobcats,44,38,.537,15.0,95.3,93.8,Yes
+2009/2010,NBA,Washington Wizards,26,56,.317,33.0,96.2,101.0,No
+2009/2010,NBA,Denver Nuggets,53,29,.646,—,106.5,102.4,Yes
+2009/2010,NBA,Utah Jazz,53,29,.646,—,104.2,98.9,Yes
+2009/2010,NBA,Portland Trail Blazers,50,32,.610,3.0,98.1,94.8,Yes
+2009/2010,NBA,Oklahoma City Thunder,50,32,.610,3.0,101.5,98.0,Yes
+2009/2010,NBA,Minnesota Timberwolves,15,67,.183,38.0,98.2,107.8,No
+2009/2010,NBA,Los Angeles Lakers,57,25,.695,—,101.7,97.0,Yes
+2009/2010,NBA,Phoenix Suns,54,28,.659,3.0,110.2,105.3,Yes
+2009/2010,NBA,Los Angeles Clippers,29,53,.354,28.0,95.7,102.1,No
+2009/2010,NBA,Golden State Warriors,26,56,.317,31.0,108.8,112.4,No
+2009/2010,NBA,Sacramento Kings,25,57,.305,32.0,100.0,104.4,No
+2009/2010,NBA,Dallas Mavericks,55,27,.671,—,102.0,99.3,Yes
+2009/2010,NBA,San Antonio Spurs,50,32,.610,5.0,101.4,96.3,Yes
+2009/2010,NBA,Houston Rockets,42,40,.512,13.0,102.4,102.7,No
+2009/2010,NBA,Memphis Grizzlies,40,42,.488,15.0,102.5,104.0,No
+2009/2010,NBA,New Orleans Hornets,37,45,.451,18.0,100.2,102.7,No
+2009/2010,WNBA,New York Liberty,22,12,.647,—,79.2,76.0,Yes
+2009/2010,WNBA,Washington Mystics,22,12,.647,—,76.9,73.3,Yes
+2009/2010,WNBA,Indiana Fever,21,13,.618,1.0,78.3,74.1,Yes
+2009/2010,WNBA,Atlanta Dream,19,15,.559,3.0,85.4,83.1,Yes
+2009/2010,WNBA,Connecticut Sun,17,17,.500,5.0,81.0,79.9,No
+2009/2010,WNBA,Chicago Sky,14,20,.412,8.0,76.1,76.8,No
+2009/2010,WNBA,Seattle Storm,28,6,.824,—,81.8,73.9,Yes
+2009/2010,WNBA,Phoenix Mercury,15,19,.441,13.0,93.9,93.8,Yes
+2009/2010,WNBA,San Antonio Silver Stars,14,20,.412,14.0,76.8,80.1,Yes
+2009/2010,WNBA,Los Angeles Sparks,13,21,.382,15.0,77.9,81.2,Yes
+2009/2010,WNBA,Minnesota Lynx,13,21,.382,15.0,78.7,82.1,No
+2009/2010,WNBA,Tulsa Shock,6,28,.176,22.0,78.0,89.8,No
