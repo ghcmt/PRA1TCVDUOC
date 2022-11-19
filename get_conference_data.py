@@ -73,4 +73,4 @@ def getStandings(years):
     return standings
 
 # Ho passem a csv:
-getStandings(range(1950, 1955, 1)).to_csv("provaFuncio.csv", index=False)
+getStandings(range(1950, 1952, 1)).to_csv("provaFuncio.csv", index=False)
