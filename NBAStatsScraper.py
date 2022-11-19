@@ -164,5 +164,5 @@ def get_advanced_stats(soup, year, ids, cols):
     advanced['Team'] = advanced['Team'].map(lambda x: x.rstrip('*'))
     return advanced
 
-NBA_scraper(range(1992, 1994, 1)).to_csv("provaDFFinal.csv", index = False)
+NBA_scraper(range(1950, 2023, 1)).to_csv("provaDFFinal.csv", index = False)
 
