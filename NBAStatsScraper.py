@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from time import sleep
 from random import randint
+import os
 
 
 def NBA_scraper(years):
@@ -22,18 +23,21 @@ def NBA_scraper(years):
         
         # Cridem a les funcions:
         print(f"Scraping season {year-1}/{year}")
+        # Comencem agafant les dades de les classificacions:
         standings = get_standings(nba, year, 
                       ["divs_standings_E", "divs_standings_W", "divs_standings_"],
                       ["wins", "losses", "win_loss_pct", "gb", "pts_per_g", "opp_pts_per_g", 
                        "srs"])
         stlist.append(standings)
         
+        # Agafem les dades per partit de cada equip:
         pG = get_per_game_stats(nba, year, 'per_game-team', 
                            ['g', 'mp', 'fg', 'fga', 'fg_pct', 'fg3', 'fg3a', 'fg3_pct',
                 'fg2', 'fg2a', 'fg2_pct', 'ft', 'fta', 'ft_pct', 'orb', 'drb',
                 'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts'])
         pGlist.append(pG)
         
+        # Finalment, recollim les mètriques avançades:
         adv = get_advanced_stats(nba, year, 'advanced-team', 
                            ['age', 'wins', 'losses', 'wins_pyth', 'losses_pyth', 'mov', 'sos', 
                 'srs', 'off_rtg', 'def_rtg', 'net_rtg', 'pace', 'fta_per_fga_pct', 
@@ -52,6 +56,16 @@ def NBA_scraper(years):
     
     # Unim els dataframes a partir de les variables comunes:
     finalDF = df1.merge(df3, on= ['Season', 'Team', 'wins', 'losses', 'srs']).merge(df2, on = ['Season', 'Team'])
+    
+    # Exportem les dades a csv i les guardem en una nova carpeta:
+    csvFolder = os.path.join(os.getcwd(), r'data')
+    if not os.path.exists(csvFolder):
+        os.makedirs(csvFolder)
+    
+    df1.to_csv(f"./data/Standings{years[0]}_{years[-1]}.csv", index = False)
+    df2.to_csv(f"./data/PerGameStats{years[0]}_{years[-1]}.csv", index = False)
+    df3.to_csv(f"./data/AdvancedStats{years[0]}_{years[-1]}.csv", index = False)
+    finalDF.to_csv(f"./data/AllStats{years[0]}_{years[-1]}.csv", index = False)    
     
     return finalDF
         
@@ -77,11 +91,10 @@ def get_standings(soup, year, ids, cols):
             for row in table.find_all('tr'):
                 # Creem un diccionari on guardarem les estadístiques de cada
                 # equip a cada temporada:
-                team = {}
-                
+                team = {}                
                 # Un nou try-catch per evitar les files 'tr' associades a la
                 # divisió de l'equip. Aquestes no tenen valors 'td', així que
-                # no ens interessa. 
+                # no ens interessen. 
                 try:
                     # Agafem les dades que ens interessen:
                     team['Season'] = f"{year-1}/{year}"
@@ -117,21 +130,23 @@ def get_per_game_stats(soup, year, ids, cols):
     # el 'league average' i no ens interessa:
     for row in pGTable[0].find_all('tr')[:-1]:    
         team = {}
+        # Bloc try-catch per només agafar línies que continguin els valors
+        # que volem:
         try:
             team['Season'] = f"{year-1}/{year}"
             team['Team'] = row.find('td', {'data-stat' : 'team'}).text    
             for col in cols:
                 team[col] = row.find('td', {'data-stat' : col}).text
-
         except AttributeError:
             continue   
+        
+        # Finalment, afegim les dades de la temporada a la llista:
         pgStats.append(team)
  
     # Generem el dataframe amb les estadístiques que hem recollit:
     perGame = pd.DataFrame(pgStats)
     
-    # Traiem l'asterisc que indica classificació a playoffs del nom de l'equip,
-    # ja que ja tenim una columna que ho referencia. 
+    # Traiem de nou l'asterisc:
     perGame['Team'] = perGame['Team'].map(lambda x: x.rstrip('*'))
     return perGame
 
@@ -153,16 +168,18 @@ def get_advanced_stats(soup, year, ids, cols):
                 team[col] = row.find('td', {'data-stat' : col}).text
 
         except AttributeError:
-            continue   
+            continue
+        
+        # Afegim les dades de cada equip a la llista:
         advStats.append(team)     
  
     # Generem el dataframe amb les estadístiques que hem recollit:
     advanced = pd.DataFrame(advStats)
     
-    # Traiem l'asterisc que indica classificació a playoffs del nom de l'equip,
-    # ja que ja tenim una columna que ho referencia. 
+    # Traiem l'asterisc que indica classificació a playoffs:
     advanced['Team'] = advanced['Team'].map(lambda x: x.rstrip('*'))
     return advanced
 
-NBA_scraper(range(1950, 2023, 1)).to_csv("provaDFFinal.csv", index = False)
+NBA_scraper(range(1950, 2023, 1))
+
 
