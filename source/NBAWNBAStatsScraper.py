@@ -92,9 +92,9 @@ class NBAWNBAStatsScraper:
             tables.append(table)
             
         for table in tables:
-            # Aquest Try-Catch està pensat per si és una temporada antiga i no
+            # Aquest condicional està pensat per si és una temporada antiga i no
             # hi ha conferències i, per tant, no existeix aquesta taula i no
-            # trobaríem cap 'tr'. Per això, fem continue per anar a la següent taula:
+            # trobaríem cap 'tr'. Per això, ens centrem en taules existents:
             if table is not None:
                 # Busquem tots els 'tr' d'aquestes taules, on hi ha les informacions
                 # dels equips
