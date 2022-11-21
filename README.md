@@ -13,8 +13,8 @@ En aquesta pràctica utilitzarem tècniques de _web scraping_ per a obtenir un d
 * Finalment (a banda d'aquest fitxer **README.md**), trobem l'arxiu **LICENSE.md**, que conté la llicència del nostre repositori. Hem triat la llicència Creative Common Zero (CC0). El raonament de la nostra decisió també es troba a la memòria. 
 
 ## DOI del Dataset
-DOI:
+DOI: 10.5281/zenodo.7343400
 
-URL:
+URL: https://zenodo.org/record/7343400
 
 
