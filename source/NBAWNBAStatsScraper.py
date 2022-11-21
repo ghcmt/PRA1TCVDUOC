@@ -250,13 +250,11 @@ class NBAWNBAStatsScraper:
 
         finalDF = pd.concat(all_df)
 
-        
-
         # Exportem les dades a csv i les guardem en una nova carpeta:
         csvFolder = os.path.join(os.getcwd().replace("/source", ""), r'dataset')
         if not os.path.exists(csvFolder):
             os.makedirs(csvFolder)
 
         # Creem el dataset final
-        finalDF.to_csv(csvFolder+"/dataset.csv", index = False) 
+        finalDF.to_csv(csvFolder+"/NBA_WNBA_statistical_evolution.csv", index = False) 
         
