@@ -29,7 +29,7 @@ class NBAWNBAStatsScraper:
         self.per_game_cols = ['g', 'mp', 'fg', 'fga', 'fg_pct', 'fg3', 
                               'fg3a', 'fg3_pct', 'fg2', 'fg2a', 'fg2_pct', 
                               'ft', 'fta', 'ft_pct', 'orb', 'drb', 'trb',
-                              'ast', 'stl', 'blk', 'tov', 'pf', 'pts']
+                              'ast', 'stl', 'blk', 'tov', 'pf']
         # Id de la taula avancada sobre els partits de cada temporada
         self.advanced_ids = 'advanced-team'
         # Columnes de la taula anterior
@@ -58,17 +58,21 @@ class NBAWNBAStatsScraper:
             seasons_links = []
             seasons = []
 
+            # Necessitem la primera fila de la taula de la WNBA, en canvi, no necessitem la primera fila de la NBA
+            first_row = False
             # Mirem cada fila per tal d'obtenir els links de cada temporada conjuntament amb l'any de la temporada
-            for row in table_content[0].find_all('tr')[3:]:
-
+            for row in table_content[0].find_all('tr')[2:]:
                 try:
                     if('wnba' in league_link):
                         seasons_links.append(base_link + row.find('a', href=True)['href'])
                         seasons.append(row.find('th', {'data-stat' : 'year_id'}).text)
                     else:
-                        if('NBA' in row.find('td', {'data-stat' : 'lg_id'}).text):
-                            seasons_links.append(base_link + row.find('a', href=True)['href'])
-                            seasons.append(row.find('th', {'data-stat' : 'season'}).text)
+                        if(first_row == True):
+                            if('NBA' in row.find('td', {'data-stat' : 'lg_id'}).text):
+                                seasons_links.append(base_link + row.find('a', href=True)['href'])
+                                seasons.append(row.find('th', {'data-stat' : 'season'}).text)
+
+                    first_row = True
 
                 except AttributeError:
                     continue
@@ -238,7 +242,7 @@ class NBAWNBAStatsScraper:
         
         # Obtenim tots els links de les pàgines a fer web scraping
         all_links = self.get_all_links(self.base_link, [self.nba_base_link, self.wnba_base_link])
-        
+
         all_df = []
         # Generem els dataframes a partir de cada temporada dividides en les dues lligues (NBA/WNBA)
         for links in all_links:
@@ -255,3 +259,4 @@ class NBAWNBAStatsScraper:
 
         # Creem el dataset final
         finalDF.to_csv(csvFolder+"/dataset.csv", index = False) 
+        
