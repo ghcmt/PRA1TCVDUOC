@@ -5,25 +5,81 @@ date:  "`r format(Sys.time(), '%d/%m/%Y')`"
 output:
   pdf_document:
     toc: yes
-    highlight: zenburn
+    highlight: tango
   html_document:
     toc: yes
     
 toc-title: "Índex de la pràctica"
 ---
 
+\newpage
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r load_libraries, include=FALSE}
 library(knitr)
 ```
 
+
+
 # Exercici 1: Descripció del dataset
 
+[El nostre dataset](https://zenodo.org/record/7343400) recopila desenes de mètriques estadístiques de més de 70 temporades de la NBA i de 25 anys de la WNBA, és a dir, des dels inicis respectius de cada lliga. Les dades es van recollir del web [Basketball Reference](https://www.basketball-reference.com/) (propietat del grup Sports Reference) i  estan classificades per equip i per temporada, amb un total de 1900 observacions i 53 variables. És a dir, a cada fila trobarem com li ha anat a un equip, des del punt de vista mètric, en una temporada en concret. L'ampla disponibilitat de variables ens permet anar des dels anàlisis més superficials (victòries, derrotes, punts a favor...) a altres més complexos (ritme de joc, eficiència dels llançaments...). 
+
+En una era com la nostra en la que les dades s'han infiltrat arreu, ens preguntem si també han arribat a la lliga de bàsquet per excel·lència. L'objectiu que perseguim amb la creació i l'actual anàlisi d'aquest dataset és ambiciós: es pot explicar l'evolució de la NBA a través de les estadístiques? Hi ha algun patró que segueixin aquells equips més exitosos? I estan dirigint aquests equips l'evolució de l'esport?
+
 # Exercici 2: Integració i selecció de les dades
+A la Pràctica 1 ja vam realitzar una integració de diferents datasets creats a partir del _web scraping_, ja que estàvem interessats en diferents taules i vam optar per fer un dataframe per cadascuna d'elles i després unir els dataframes resultants per les columnes comunes (amb la funció `merge` de la llibreria `pandas`). Per tant, el dataset lliurat a la PRA1 és el que carregarem:
+
+
+```{r}
+# Carreguem les dades amb read.csv:
+df <- read.csv("../dataset/NBA_WNBA_statistical_evolution.csv")
+```
+
+Com posar la sortida de les funcions head, summary o str pot allargar molt el document i resultar improductiu degut a l'elevat nombre de variables que tenim, podem crear una taula per veure la informació bàsica del dataset: quantes observacions tenim, quantes variables, quines són numèriques, etc.
+
+```{r}
+# Carreguem kableExtra per fer la taula amb la informació bàsica. També 
+# carreguem dplyr per ajudar-nos amb el filtratge de les dades:
+library(kableExtra)
+library(dplyr)
+
+# Traiem les dades bàsiques del dataset:
+cols <- ncol(df)
+rows <- nrow(df)
+
+# Informació del tipus de variables:
+catCols <- length(names(df)[sapply(df, is.character)])
+numCols <- length(names(df)[sapply(df, is.numeric)])
+
+# I informació respecte als valors nuls, primer per cada fila:
+compObs <- nrow(df %>% filter(complete.cases(.)))
+compObsPct <- paste(compObs, '/', rows, ' = ', 
+                      round(((compObs/rows) * 100), 2), '%')
+
+# I per les variables:
+comVars <- df %>% select_if(~ all(!is.na(.))) %>% length()
+comVarsPct <- paste(comVars, '/', cols, ' = ', 
+                    round(((comVars/cols) * 100), 2), '%')
+
+# Definim el que hi haurà al dataframe:
+mets <- c("Nombre d'observacions", "Nombre de variables", "Variables numèriques", 
+          "Variables categòriques", "Casos complets (%) (observacions sense NAs)", 
+          "Variables completes (%) (variables sense NAs)")
+vals <- c(rows, cols, numCols, catCols, compObsPct, comVarsPct)
+
+# Ho passem tot a un dataframe i fem la taula:
+resum <- data.frame(mets, vals)
+kable(resum, booktabs = TRUE, caption = "Mètriques bàsiques del dataset", 
+      col.names = c("Mètrica", "Valor")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+```
+
+
 
 # Exercici 3: Neteja de les dades
 
