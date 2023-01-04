@@ -1,0 +1,48 @@
+---
+title: "**Pràctica 2: Com realitzar la neteja i l'anàlisi de dades?**"
+author: "Carlos Martínez Torró (cmtorro@uoc.edu) i Xavier Roca Canals (xrocaca@uoc.edu)"
+date:  "`r format(Sys.time(), '%d/%m/%Y')`"
+output:
+  pdf_document:
+    toc: yes
+    highlight: zenburn
+  html_document:
+    toc: yes
+    
+toc-title: "Índex de la pràctica"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libraries, include=FALSE}
+library(knitr)
+```
+
+# Exercici 1: Descripció del dataset
+
+# Exercici 2: Integració i selecció de les dades
+
+# Exercici 3: Neteja de les dades
+
+## 3.1: Les dades contenen zeros o elements buits?
+
+## 3.2 Identifica i gestiona els valors extrems.
+
+# Exercici 4: Anàlisi de les dades
+
+## 4.1 Selecció dels grups de dades que es volen analitzar/comparar.
+
+## 4.2 Comprovació de la normalitat i homogeneïtat de la variància.
+
+## 4.3 Aplicació de proves estadístiques per comparar els grups de dades. Aplicar almenys tres mètodes d'anàlisi diferents. 
+
+# Exercici 5: Representació dels resultats.
+
+# Exercici 6: Resolució del problema.
+
+# Exercici 7: Codi.
+
+# Exercici 8: Vídeo.
