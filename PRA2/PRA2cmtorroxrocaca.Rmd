@@ -15,7 +15,7 @@ toc-title: "Índex de la pràctica"
 \newpage
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
 ```{r load_libraries, include=FALSE}
@@ -31,7 +31,7 @@ library(knitr)
 En una era com la nostra en la que les dades s'han infiltrat arreu, ens preguntem si també han arribat a la lliga de bàsquet per excel·lència. L'objectiu que perseguim amb la creació i l'actual anàlisi d'aquest dataset és ambiciós: es pot explicar l'evolució de la NBA a través de les estadístiques? Hi ha algun patró que segueixin aquells equips més exitosos? I estan dirigint aquests equips l'evolució de l'esport?
 
 # Exercici 2: Integració i selecció de les dades
-A la Pràctica 1 ja vam realitzar una integració de diferents datasets creats a partir del _web scraping_, ja que estàvem interessats en diferents taules i vam optar per fer un dataframe per cadascuna d'elles i després unir els dataframes resultants per les columnes comunes (amb la funció `merge` de la llibreria `pandas`). Per tant, el dataset lliurat a la PRA1 és el que carregarem:
+A la Pràctica 1 ja vam realitzar una integració de diferents datasets creats a partir del _web scraping_, ja que estàvem interessats en diferents taules i vam optar per fer un dataframe per cadascuna d'elles i després unir els dataframes resultants per les columnes comunes (amb la funció `merge` de la llibreria `pandas`). Per tant, el dataset lliurat a la PRA1 és el que carregarem.
 
 
 ```{r}
@@ -39,7 +39,7 @@ A la Pràctica 1 ja vam realitzar una integració de diferents datasets creats a
 df <- read.csv("../dataset/NBA_WNBA_statistical_evolution.csv")
 ```
 
-Com posar la sortida de les funcions head, summary o str pot allargar molt el document i resultar improductiu degut a l'elevat nombre de variables que tenim, podem crear una taula per veure la informació bàsica del dataset: quantes observacions tenim, quantes variables, quines són numèriques, etc.
+Com posar la sortida de les funcions `head`, `summary` o `str` pot allargar molt el document i resultar improductiu degut a l'elevat nombre de variables que tenim, podem crear una taula per veure la informació bàsica del dataset: quantes observacions tenim, quantes variables, quantes són numèriques, quantes categòriques, etc.
 
 ```{r}
 # Carreguem kableExtra per fer la taula amb la informació bàsica. També 
@@ -71,7 +71,7 @@ mets <- c("Nombre d'observacions", "Nombre de variables", "Variables numèriques
           "Variables completes (%) (variables sense NAs)")
 vals <- c(rows, cols, numCols, catCols, compObsPct, comVarsPct)
 
-# Ho passem tot a un dataframe i fem la taula:
+# Ho passem tot a un dataframe i formatem la taula amb Kable:
 resum <- data.frame(mets, vals)
 kable(resum, booktabs = TRUE, caption = "Mètriques bàsiques del dataset", 
       col.names = c("Mètrica", "Valor")) %>% 
@@ -79,6 +79,34 @@ kable(resum, booktabs = TRUE, caption = "Mètriques bàsiques del dataset",
 
 ```
 
+Com podem veure a la taula, hi ha un gran percentatge de casos complets (és a dir, equips amb tota la informació de l temporada completa), mentre que aproximadament el 60% de les variables no tenen cap valor NA. Podem fer una ullada a quines són les variables amb més valors perduts del nostre dataset.  
+
+```{r}
+# Apliquem sapply per obtenir els valors perduts per variable:
+nas <-sapply(df, function(y) sum(length(which(is.na(y)))))
+
+# Creem un dataframe amb els valors:
+nas <- data.frame(nas)
+nas <- cbind(variables = rownames(nas), data.frame(nas, row.names=NULL))
+
+# Ordenem per valor més alt de NA:
+nas <- nas[order(nas$nas, decreasing = TRUE), ]
+rownames(nas) <- NULL
+
+# Ho formatem amb kable:
+kable(head(nas, 10), booktabs = TRUE, caption = "Variables amb més valors perduts", 
+      col.names = c("Variable", "Valors NA")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+```
+
+Veiem que algunes d'aquestes variables estan relacionades amb el llançament de tres punts. Això és degut a que fins 1979 no existia aquest llançament, així que hi ha gairebé trenta anys de registres on aquestes variables tenen valor nul per definició. Per altra banda, algunes mètriques com els rebots ofensius (variable _orb_) o defensius (variable _drb_) i les pèrdues (com el percentatge del propi equip amb la variable _tov_pct_ o del contrari amb _opp_tov_pct_) també van ser estadístiques que no es recollien originalment, així que és normal que hi hagi valors perduts en aquestes. De fet, si filtrem i només agafem les observacions posteriors a la temporada 1978-79 (el llançament de tres va començar a la 1979-80) veurem que el nombre de valors perduts és molt diferent:
+
+```{r}
+df2 <- df %>% filter(Season > "1978-79")
+cat("Valors perduts després de la temporada 1978-79:", sum(is.na(df2)))
+
+```
 
 
 # Exercici 3: Neteja de les dades
