@@ -111,9 +111,43 @@ cat("Valors perduts després de la temporada 1978-79:", sum(is.na(df2)))
 
 # Exercici 3: Neteja de les dades
 
+Com bé hem comentat en l'anterior apartat, trobem temporades en les quals ens falta informació sobre estadístiques bàsiques sobre el joc. D'aquesta forma, ens dificulta l'anàlisi sobre aquestes temporades, ja que no disposem dels elements bàsics per entendre com era l'estil o funcionament de joc de cada equip. En conseqüència, s'ha decidit descartar aquestes temporades.
+
 ## 3.1: Les dades contenen zeros o elements buits?
 
+Així i tot, trobem temporades més antigues a l'aparició del tir de tres punts que si disposen d'aquestes estadístiques. Observant el conjunt de dades, trobem que a partir de la temporada 1973-74 disposem de tota la informació necessària. Així i tot, analitzarem quins valors buits disposem en el nostre conjunt de dades a partir d'aquesta temporada.
+```{r}
+df3 <- df %>% filter(Season > "1973-74")
+sort(colSums(is.na(df3)), decreasing = TRUE)
+```
+
+Com era d'esperar, les úniques variables que observem amb valors buits són les que fan referència als tirs de tres punts. El que farem, és omplir aquests valors buits amb el valor 0, ja que s'ha decidit que és el valor que realment representa aquests camps. Com no existia el tir de tres no es van realitzar cap tir.
+
+```{r}
+df3$fg3[is.na(df3$fg3)] <- 0
+df3$fg3_pct[is.na(df3$fg3_pct)] <- 0
+df3$fg3a[is.na(df3$fg3a)] <- 0
+df3$fg3a_per_fga_pct[is.na(df3$fg3a_per_fga_pct)] <- 0
+```
+
+Un altre fet a tenir en compte, és el camp "gb". Aquesta variable ens mostra quants partits té cada equip per darrere del rival que ocupa el primer lloc. En alguns casos, aquesta informació ve representada amb el valor "-". Entenem que aquest valor, fa referència al fet que no té cap partit per darrere dels rivals i el seu valor real és 0.
+
+```{r}
+df3$gb <- as.numeric(df3$gb)
+df3$gb[is.na(df3$gb)] <- 0
+```
+
 ## 3.2: Identifica i gestiona els valors extrems.
+En aquest cas, a partir de la funció 'summary' podem observar els mínims i màxims valors de cada variable. No s'exemplificarà en el document, ja que el gran volum de variables dificultaria la lectura del document de la pràctica. Així i tot, un cop comprovat aquest, sí que podem trobar valors molt petits en comparació a la mitjana, com pot ser el cas de victòries que ha assolit un equip en una temporada.
+
+Ho podem veure en aquest petit exemple:
+```{r}
+summary(df3$wins)
+```
+
+És normal, que ens podem trobar aquests casos en múltiples variables, ja que en una mateixa temporada, els equips guanyadors presentaran valors màxims en victòries i els perdedors mínims en aquestes. En conseqüència, també es veurà reflectit en les estadístiques d'aquests equips.
+
+El que s'ha decidit és no realitzar cap modificació, perquè aquests valors són correctes perquè es basen en dades reals sobre les temporades i les estadístiques de joc de cada un dels equips. Per tant, hem d'assumir que trobarem valors màxims i mínims en alguns casos a causa de la competició.
 
 # Exercici 4: Anàlisi de les dades
 
