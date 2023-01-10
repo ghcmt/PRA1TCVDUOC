@@ -149,24 +149,27 @@ summary(df3$wins)
 
 El que s'ha decidit és no realitzar cap modificació, ja que aquests valors són correctes perquè es basen en dades reals sobre les temporades i les estadístiques de joc de cada un dels equips. Per tant, hem d'assumir que serà possible trobar valors que siguin _outliers_, però que haurem de tractar com un valor més. 
 
-```{r}
-summary(df)
-```
-
-
 # Exercici 4: Anàlisi de les dades
-Abans de començar amb l'anàlisi, haurem de tenir en compte que els valors absoluts ens poden portar a error i que haurem d'optar, en general, pels relatius (percentatges o mètriques ajustades per partit o possessions). Això és degut a que la NBA i la WNBA tenen un nombre de partits totals diferents, però també perquè la pròpia NBA ha evolucionat en aquest aspecte: en el seu inici es jugaven molts menys partits. Veiem-ho amb un gràfic:
+Abans de començar amb l'anàlisi, haurem de tenir en compte que els valors absoluts ens poden portar a error i que haurem d'optar, en general, pels relatius (percentatges o mètriques ajustades per partit o possessions). Això és degut a que la NBA i la WNBA tenen un nombre de partits totals diferents, però també perquè la pròpia NBA ha evolucionat en aquest aspecte: en el seu inici es jugaven molts menys partits. Veiem-ho amb un gràfic, on utilitzarem les dades de partits des de 1973:
 
 ```{r}
 library(ggplot2)
 # Creem la columna 'games' per guardar la informació del total de partits que ha jugat cada equip:
 df3$games <- df3$wins + df3$losses
-df3
-summary(df3$games)
 
 # Fem el gràfic:
-ggplot(data=df3, aes(x=Season, y=games, fill=League)) + geom_bar(stat="identity", color="black", position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues")
+ggplot(df3, aes(x=games, color=League, fill=League)) +
+geom_histogram(aes(y=..density..), position="identity", alpha=0.5)+
+geom_density(alpha=0.6)+
+scale_color_brewer(palette="Dark2")+
+scale_fill_brewer(palette="Dark2") +
+labs(title="Histograma dels partits per temporada a la NBA i la WNBA",
+     x="Partits per temporada", y = "Densitat")+
+theme_classic()
 ```
+
+Com es pot veure, en general les temporades a la NBA han tingut més de 80 partits, però no sempre ha sigut així. Pel que fa a la WNBA, hi ha més variació en aquest número de partits, però es troba al voltant dels 30. És per això que, en cas d'utilitzar valors absoluts, haurem de comprovar prèviament que estiguem comparant entre temporades amb el mateix número de partits. 
+
 
 ## 4.1: Selecció dels grups de dades que es volen analitzar/comparar.
 Per seleccionar els grups de dades a comparar, farem èmfasis en els mètodes d'anàlisi que es volen realitzar per tal d'escollir quines variables/camps ens poden ajudar per donar resposta a aquests.
@@ -183,13 +186,14 @@ Per tant, el conjunt de dades final tindria les següents variables:
 
 ## 4.2: Comprovació de la normalitat i homogeneïtat de la variància.
 
-Per tal de realitzar la comprovació de la normalitat, ens basarem en el test de Shapiro-Wilk, ja que es tracta dels més potents per contrastar aquesta. Assumirem com a hipòtesi nul·la que la població està distribuïda normalment. Direm que α=0,05, per tant, si p-valor és major a alpha, assumirem que les dades segueixen una distribució normal.
+Per tal de realitzar la comprovació de la normalitat, ens basarem en el test de Shapiro-Wilk, ja que es tracta dels més potents per contrastar aquesta. Assumirem com a hipòtesi nul·la que la població està distribuïda normalment. Direm que $\alpha$ = 0.05, per tant, si p-valor és major a $\alpha$, assumirem que les dades segueixen una distribució normal.
 
 ```{r}
 shapiro.test(df3$fg3)
 ```
 
-Seguidament, per comprovar l'homogeneïtat de la variància, ens basarem en els tests de Levene, per les que segueixen una distribució normal i Fligner-Killeen, per les que no les compleixen. Assumirem com a hipòtesi nul·la la igualtat de variàncies en els grups de dades. Direm que α=0,05, per tant, si p-valor és major a alpha, assumirem que la hipòtesi nul·la.
+Seguidament, per comprovar l'homogeneïtat de la variància, ens basarem en els tests de Levene, per les que segueixen una distribució normal i Fligner-Killeen, per les que no les compleixen. Assumirem com a hipòtesi nul·la la igualtat de variàncies en els grups de dades. Direm que $\alpha$ = 0.05, per tant, si p-valor és major a $\alpha$, no podrem refutar aquesta hipòtesi nul·la i, per tant, podrem dir que hi haurà igualtat de variàncies. 
+
 ```{r}
 library(car)
 #leveneTest(wins ~ fg3, data = df3)
@@ -204,8 +208,8 @@ Seguidament, aplicarem les proves estadístiques descrites anteriorment.
 
 ### Anàlisi estadística descriptiva
 Començarem agrupant el percentatge de victòries i percentatge de vegades que ha entrat a playoffs cada equip i realitzarem la mitjana a partir del nombre de temporades. D'aquesta forma, estudiarem quins equips són els equips més guanyadors durant els anys i com es veu influenciat en les classificacions als playoffs.
-```{r}
-
+```{r fig.height=10, fig.width=10}
+library(ggpubr)
 #Discretitzem variable
 df3$disc_playoffs[df3$Playoffs == "Yes"] <- 1
 df3$disc_playoffs[df3$Playoffs == "No"] <- 0
@@ -242,21 +246,106 @@ res_nba <- nba_wins %>% arrange(desc(all_wins_pct)) %>%
 res_wnba <- wnba_wins %>% arrange(desc(all_wins_pct)) %>%
                     slice(1:5)
 
-p1 <- ggplot(data=res_nba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (NBA)") + xlab("Equip") + ylab("Percentatge")
+p1 <- ggplot(data=res_nba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (NBA)") + xlab("Equip") + ylab("Percentatge") +  
+  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
+            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
+  theme(axis.text.x = element_blank())
 
-p2 <- ggplot(data=res_wnba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (WNBA)") + xlab("Equip") + ylab("Percentatge")
+p2 <- ggplot(data=res_wnba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (WNBA)") + xlab("Equip") + ylab("Percentatge") +  
+  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
+            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
+  theme(axis.text.x = element_blank())
 
-p3 <- ggplot(data=res_nba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (NBA)") + xlab("Equip") + ylab("Percentatge")
+p3 <- ggplot(data=res_nba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (NBA)") + xlab("Equip") + ylab("Percentatge") +  
+  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
+            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
+  theme(axis.text.x = element_blank())
 
-p4 <- ggplot(data=res_wnba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (WNBA)") + xlab("Equip") + ylab("Percentatge")
+p4 <- ggplot(data=res_wnba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (WNBA)") + xlab("Equip") + ylab("Percentatge") +  
+  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
+            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
+  theme(axis.text.x = element_blank()) 
 
 if(!require('xfun')) install.packages('xfun'); library('xfun')
 
-multiplot(p1, p2, p3, p4, cols = 2)
+
+ggarrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
+#multiplot(p1, p2, p3, p4, cols = 2) # de quin paquet és aquesta funció??
 
 ```
 
 Com es pot observar, veiem una alta relació en la mitjana de victòries aconseguides amb el percentatge de vegades que ha entrat l'equip a playoffs. Aquest fet pot resultar evident, ja que amb més victòries obtingudes en una temporada més possibilitats d'entrar a playoffs. Així i tot, si veiem a l'NBA, l'equip TOP 5 (Oklahoma City Thunder) té un percentatge proper a 60% de victòries i supera un 70% de vegades que ha classificat a playoffs. Per altra banda, si ho comparem amb el top 5 de la WNBA (Minnesota Lynx). Aquest té un percentatge de victòries proper al 50% i el seu % de vegades que ha entrat a playoffs és de quasi un 50% també. Fet que ens podria assegurar que aquest equip pot resultar irregular (diferència elevada de victòries/derrotes en les temporades) o que frega els límits de classificació cada temporada, fet que desemboca en aquesta irregularitat d'arribada a playoffs.
+
+
+### Anàlisi estadística descriptiva
+La introducció dels llançaments de tres a la lliga l'any 1979 va suposar un abans i un després a l'hora de jugar l'esport. No obstant, un espectador que no hagi vist res de bàsquet en els darrers 20 anys es podria sorprendre amb la quantitat aparent de llançaments de tres que es practiquen avui en dia. Amb l'aparició de fenòmens com Stephen Curry, el joc sembla haver canviat en els darrers anys. 
+
+Per analitzar-ho millor, farem un anàlisi dècada per dècada dels llançaments de tres. Ens fixarem en una variable en concret: `fg3a_per_fga_pct`. Aquesta variable indica (en percentatge) quants llançaments de tres ha realitzat un equip de tots els llançaments intentats. És a dir, si de 10 tirs de camp, 4 són triples, parlarem d'un 40% (en la variable estaria codificat com a 0.4). Triem aquesta variable en comptes del nombre de triples perquè ens pot donar una idea millor de si ha variat la selecció de llançaments. 
+
+Així doncs, farem quatre grups diferents: del 79 fins el 90, del 90 fins el 2000, del 2000 fins el 2010 i del 2010 fins l'actualitat. Ho codificarem tot en una nova variable, que anomenarem `decade`:
+
+```{r}
+# Creem la nova variable amb case_when:
+df <- df %>% mutate(decade = case_when(
+  Season > "1978-79" & Season < "1989-90" ~ "80s",
+  Season > "1988-89" & Season < "1999-00" ~ "90s",
+  Season > "1988-99" & Season < "2009-10" ~ "00s",
+  Season > "2008-09" ~ "10s",
+  TRUE ~ "Pre-three era"
+))
+
+df$decade <- factor(df$decade, levels = c("Pre-three era", "80s", "90s", "00s", "10s"))
+```
+
+Amb un boxplot podem comparar les èpoques a primera vista:
+
+```{r}
+# Grafiquem, excloent abans les temporades sense llançaments de tres:
+ggplot(df %>% filter(decade != "Pre-three era"), 
+       aes(x=decade, y=fg3a_per_fga_pct*100, fill=League)) + geom_boxplot() + 
+  labs(title = "Llançaments de tres intentats respecte el total per dècada", 
+       x = "Dècada", y = "FG3A/FGA (%)") + scale_fill_brewer(palette="RdBu") +
+  theme_classic()
+```
+
+Veiem que, efectivament, hi ha una tendència a llançar més de tres amb els anys. Utilitzem ara un gràfic de dispersió per a observar aquesta tendència amb el pas de les temporades:
+
+```{r}
+ggplot(df %>% filter(decade != "Pre-three era"), 
+       aes(x=Season, y = fg3a_per_fga_pct*100, color = decade)) + 
+  geom_point(size=0.7) + 
+  labs(title = "Tendència de llançaments de tres intentats amb el pas dels anys", 
+       x = "Temporada", y = "FG3A/FGA (%)") + 
+  scale_x_discrete(breaks = c("1979-80", "1989-90", "1999-00", "2009-10", "2021-22")) +
+  guides(colour = guide_legend(override.aes = list(size = 3))) + theme_classic()
+```
+
+Notablement, sembla que aquest percentatge es manté en un rang similar des de mitjans dels 90 fins mitjans de la dècada dels 2010s, on comença a pujar. Hi ha un equip, fins i tot, que va sobrepassar el 50% de llançaments de tres del total de llançaments.
+
+```{r}
+df3max <- df[which.max(df$fg3a_per_fga_pct),] %>% select(Season, Team, wins, losses, Playoffs, fg3a_per_fga_pct, fg3_pct)
+rownames(df3max) <- NULL
+kable(df3max, booktabs = TRUE, 
+      caption = "Equip amb el valor màxim de llançaments de tres intentats 
+      respecte el total de llançaments") %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+Passarem ara a fer l'anàlisi estadístic d'aquestes dades. Abans, però, haurem de comprovar la normalitat per saber si haurem d'aplicar un test paramètric o un no paramètric. 
+
+```{r}
+norm3 <- df %>% filter(decade != "Pre-three era") %>%
+  group_by(decade) %>%
+  summarise(statistic = shapiro.test(fg3a_per_fga_pct)$statistic,
+            p.value = shapiro.test(fg3a_per_fga_pct)$p.value)
+
+norm3 <- as.data.frame(norm3)
+
+kable(norm3, booktabs = TRUE, 
+      caption = "Test de Shapiro-Wilk per avaluar normalitat de la mostra") %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
 
 # Exercici 5: Representació dels resultats.
 
