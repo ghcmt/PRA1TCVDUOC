@@ -160,19 +160,103 @@ Abans de començar amb l'anàlisi, haurem de tenir en compte que els valors abso
 ```{r}
 library(ggplot2)
 # Creem la columna 'games' per guardar la informació del total de partits que ha jugat cada equip:
-df$games <- df$wins + df$losses
-summary(df$games)
+df3$games <- df3$wins + df3$losses
+df3
+summary(df3$games)
 
 # Fem el gràfic:
-ggplot(data=df, aes(x=Season, y=games, fill=League)) + geom_bar(stat="identity", color="black", position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues")
+ggplot(data=df3, aes(x=Season, y=games, fill=League)) + geom_bar(stat="identity", color="black", position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues")
 ```
 
-
 ## 4.1: Selecció dels grups de dades que es volen analitzar/comparar.
+Per seleccionar els grups de dades a comparar, farem èmfasis en els mètodes d'anàlisi que es volen realitzar per tal d'escollir quines variables/camps ens poden ajudar per donar resposta a aquests.
+
++ **Anàlisi estadística descriptiva**: Realitzarem una exploració de les dades per tal de veure quins equips presenten una mitjana de % de victòries més elevada durant els anys. Així doncs, ho compararem amb el percentatge de les vegades que ha estat classificat cada equip a playoffs per visualitzar la relació que poden tenir. A més, veurem l'evolució d'estadístiques bàsiques de cada temporada per veure la seva evolució i entendre quina tendència segueixen per avaluar com ha pogut canviar l'estil de joc de les grans lligues durant els anys.
+
++ **Anàlisi estadística inferencial**: En aquest cas, realitzarem diferents regressions entre les estadístiques bàsiques en comparació a les victòries per tal d'analitzar la importància d'aquestes en el rendiment dels equips.
+
++ **Model supervisat**: Finalment, realitzarem un model predictor que ens identifiqui si un equip té la possibilitat d'arribar a playoffs segons certes variables més avançades que intervenen en el joc.
+
+Per tant, el conjunt de dades final tindria les següents variables:
+
+**Faltaria ficar la taula. Pendent del que vulguis fer**
 
 ## 4.2: Comprovació de la normalitat i homogeneïtat de la variància.
 
+Per tal de realitzar la comprovació de la normalitat, ens basarem en el test de Shapiro-Wilk, ja que es tracta dels més potents per contrastar aquesta. Assumirem com a hipòtesi nul·la que la població està distribuïda normalment. Direm que α=0,05, per tant, si p-valor és major a alpha, assumirem que les dades segueixen una distribució normal.
+
+```{r}
+shapiro.test(df3$fg3)
+```
+
+Seguidament, per comprovar l'homogeneïtat de la variància, ens basarem en els tests de Levene, per les que segueixen una distribució normal i Fligner-Killeen, per les que no les compleixen. Assumirem com a hipòtesi nul·la la igualtat de variàncies en els grups de dades. Direm que α=0,05, per tant, si p-valor és major a alpha, assumirem que la hipòtesi nul·la.
+```{r}
+library(car)
+#leveneTest(wins ~ fg3, data = df3)
+
+fligner.test(wins ~ fg3, data = df3)
+
+```
+
 ## 4.3: Aplicació de proves estadístiques per comparar els grups de dades. Aplicar almenys tres mètodes d'anàlisi diferents. 
+
+Seguidament, aplicarem les proves estadístiques descrites anteriorment.
+
+### Anàlisi estadística descriptiva
+Començarem agrupant el percentatge de victòries i percentatge de vegades que ha entrat a playoffs cada equip i realitzarem la mitjana a partir del nombre de temporades. D'aquesta forma, estudiarem quins equips són els equips més guanyadors durant els anys i com es veu influenciat en les classificacions als playoffs.
+```{r}
+
+#Discretitzem variable
+df3$disc_playoffs[df3$Playoffs == "Yes"] <- 1
+df3$disc_playoffs[df3$Playoffs == "No"] <- 0
+
+#Filtrem per lliga
+nba_wins <- df3 %>% filter(League == "NBA")
+wnba_wins <- df3 %>% filter(League == "WNBA")
+
+#Calculem quantes temporades ha jugat cada equip
+nba_seasons <- nba_wins %>%
+                group_by(nba_wins$Team) %>%
+                tally()
+
+wnba_seasons <- wnba_wins %>%
+                group_by(wnba_wins$Team) %>%
+                tally()
+
+nba_wins <- select(nba_wins, Team, win_loss_pct, disc_playoffs)
+wnba_wins <- select(wnba_wins, Team, win_loss_pct, disc_playoffs)
+
+#Sumem els valors a estudiar
+nba_wins <- aggregate(.~Team, data=nba_wins, FUN=sum)
+wnba_wins <- aggregate(.~Team, data=wnba_wins, FUN=sum)
+
+#Calculem percentatges
+nba_wins$all_wins_pct <- nba_wins$win_loss_pct / nba_seasons$n
+nba_wins$playoffs_pct <- nba_wins$disc_playoffs / nba_seasons$n
+wnba_wins$all_wins_pct <- wnba_wins$win_loss_pct / wnba_seasons$n
+wnba_wins$playoffs_pct <- wnba_wins$disc_playoffs / wnba_seasons$n
+
+res_nba <- nba_wins %>% arrange(desc(all_wins_pct)) %>%
+                    slice(1:5)
+
+res_wnba <- wnba_wins %>% arrange(desc(all_wins_pct)) %>%
+                    slice(1:5)
+
+p1 <- ggplot(data=res_nba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (NBA)") + xlab("Equip") + ylab("Percentatge")
+
+p2 <- ggplot(data=res_wnba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (WNBA)") + xlab("Equip") + ylab("Percentatge")
+
+p3 <- ggplot(data=res_nba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (NBA)") + xlab("Equip") + ylab("Percentatge")
+
+p4 <- ggplot(data=res_wnba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (WNBA)") + xlab("Equip") + ylab("Percentatge")
+
+if(!require('xfun')) install.packages('xfun'); library('xfun')
+
+multiplot(p1, p2, p3, p4, cols = 2)
+
+```
+
+Com es pot observar, veiem una alta relació en la mitjana de victòries aconseguides amb el percentatge de vegades que ha entrat l'equip a playoffs. Aquest fet pot resultar evident, ja que amb més victòries obtingudes en una temporada més possibilitats d'entrar a playoffs. Així i tot, si veiem a l'NBA, l'equip TOP 5 (Oklahoma City Thunder) té un percentatge proper a 60% de victòries i supera un 70% de vegades que ha classificat a playoffs. Per altra banda, si ho comparem amb el top 5 de la WNBA (Minnesota Lynx). Aquest té un percentatge de victòries proper al 50% i el seu % de vegades que ha entrat a playoffs és de quasi un 50% també. Fet que ens podria assegurar que aquest equip pot resultar irregular (diferència elevada de victòries/derrotes en les temporades) o que frega els límits de classificació cada temporada, fet que desemboca en aquesta irregularitat d'arribada a playoffs.
 
 # Exercici 5: Representació dels resultats.
 
