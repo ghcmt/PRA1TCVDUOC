@@ -481,9 +481,47 @@ kable(vars21, booktabs = TRUE, caption = "Variables seleccionades per la correla
 ```
 
 ### Anàlisi 2.2: Correlació entre les estadístiques més bàsiques
-Seguidament, comprovarem quina correlació poden tenir totes aquestes variables entre si, i entendre quin estil de joc predomina durant cada època dins de l'NBA i WNBA.
+Seguidament, comprovarem quina correlació poden tenir totes aquestes variables entre si, i entendre quin estil de joc predomina durant cada època dins de l'NBA i WNBA. No obstant, abans de començar amb les correlacions haurem de veure la distribució d'aquestes variables, ja que depenent de si hi ha normalitat o no haurem d'aplicar un mètode o un altre (per exemple, la correlació de Pearson és paramètrica, mentre que la $\tau$ de Kendall i la $\rho$ de Spearman són no paramètriques). Com la nostra intenció és veure l'evolució en diferents eres, mirarem la distribució d'aqustes mostres en funció de l'era i la lliga:
 
-Primer de tot, començarem amb l'NBA.
+```{r}
+norm22 <- df %>% filter(decade != "Pre-three era") %>% 
+    gather(key = "varname", value = "value", vars) %>% 
+    group_by(varname, decade, League)  %>% 
+    do(tidy(shapiro.test(.$value))) %>% 
+    ungroup() %>% 
+    select(-method)
+
+
+
+kable(head(norm22[order(norm22$p.value, decreasing = TRUE), ]), booktabs = TRUE, 
+      caption = "Normalitat de les variables en funció de la dècada i la lliga (primeres files)", 
+      col.names = c("Variable", "Descripció de la variable", "f", "f", "p-valor")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position")) %>% 
+  footnote("Ordenats per p-valor descendent")
+
+norm22cols <- nrow(norm22)
+higher05 <- sum(norm22$p.value >= 0.05)
+lower05 <- sum(norm22$p.value < 0.05)
+normSum <- data.frame(param = c("Total d'observacions", "Superior a 0.05", "Inferior a 0.05"),
+                      value = c(norm22cols, higher05, lower05))
+
+kable(normSum, booktabs = TRUE, 
+      caption = "Resum de les distribucions de les variables en funció del seu p-valor", 
+      col.names = c("Paràmetre", "Nombre d'observacions")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+
+```
+
+Veiem que aproximadament un terç de les distribucions no són gaussianes, ja que refutem la hipòtesi nul·la en 32 dels 105 casos. Així, podem portar a terme una transformació logarítmica d'algunes variables per veure si així la distribució s'assembla més a una normal.
+
+```{r}
+norm <- norm22 %>% group_by(varname) %>% count(p.value < 0.05)
+norm %>% filter(`p.value < 0.05` == TRUE) %>% arrange(desc(n))
+
+```
+
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 if(!require("corrplot")) install.packages("corrplot"); library("corrplot")
 
@@ -495,26 +533,28 @@ n = c("win_loss_pct","age", "off_rtg","def_rtg","fg","fg2","fg3","ft","orb","drb
 data <- nba_data %>% filter(decade == "80s")
 factors = data %>% select(all_of(n))
 res <- cor(factors)
-corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+p80s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
    number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
 
 data <- nba_data %>% filter(decade == "90s")
 factors = data %>% select(all_of(n))
 res <- cor(factors)
-corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+p90s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
    number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
 
 data <- nba_data %>% filter(decade == "00s")
 factors = data %>% select(all_of(n))
 res <- cor(factors)
-corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+p00s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
    number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
 
 data <- nba_data %>% filter(decade == "10s")
 factors = data %>% select(all_of(n))
 res <- cor(factors)
-corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+p10s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
    number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+View(df)
 
 ```
 
