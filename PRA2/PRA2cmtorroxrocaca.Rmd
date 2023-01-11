@@ -416,11 +416,11 @@ kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "$Diferències entre dècad
 
 Així, veiem que hi ha diferències significatives entre tots els grups. No obstant, veiem que les diferències entre els 90s i els 2000s i entre els 2000s i els 2010s són menors que entre les altres dècades, un fet que podíem intuir amb la representació gràfica d'aquesta variable.
 
-## Anàlisi 2: Què fa guanyadors a aquells equips amb més victòries?
-Una altra cosa que ens preguntem és quins són els factors que més influeixen en les victòries de manera històrica. És a dir, quines variables tenen més pes quan, a final de temporada, mirem les victòries d'un equip.
+## Anàlisi 2: Estudi sobre les estadístiques bàsiques i generals sobre el joc durant les diferents èpoques
+Una altra cosa que ens preguntem és quins són els factors que més influeixen en el joc de manera històrica. És a dir, quines variables tenen més pes quan, a final de temporada, mirem les victòries i derrotes d'un equip.
 
 ### Anàlisi 2.1: Selecció de les dades que es volen analitzar/comparar
-Com disposem d'un gran nombre de variables, farem una regressió lineal amb una selecció d'elles, utilitzant les victòries com a variable dependent. Com hem comentat abans, no seria raonable utilitzar el valor absolut de victòries, ja que aquest pot variar en funció del nombre de partits totals que es juguen; per tant, utilitzarem el percentatge de victòries (variable _win_loss_pct_). A continuació, detallem quines variables seleccionarem pel model:
+Com disposem d'un gran nombre de variables, farem una correlació amb una selecció d'elles. Com hem comentat abans, no seria raonable utilitzar el valor absolut de victòries, ja que aquest pot variar en funció del nombre de partits totals que es juguen; per tant, utilitzarem el percentatge de victòries (variable _win_loss_pct_). A continuació, detallem quines variables seleccionarem per l'estudi:
 
 ```{r}
 # Seleccionem les variables:
@@ -449,6 +449,112 @@ kable(vars21, booktabs = TRUE, caption = "Variables seleccionades pel model line
 
 Així, hem fet una selecció d'estadístiques clàssiques de la NBA per a veure quines d'elles influeixen en el percentatge de victòries a final de temporada. Abans de tot, però, haurem de transformar algunes variables. 
 
+## Anàlisi 2: estudi sobre les estadístiques bàsiques i generals sobre el joc
+Dins de l'NBA, cada un dels equips que han competit o encara competeixen han desenvolupat un estil de joc característic a partir d'aprofundir i millorar en certes capacitats ofensives/defensives que els ha permès aconseguir victòries i obtenir el rendiment desitjat. Gràcies al conjunt de dades que presentem, podem observar quin estil de joc ha presentat cada un dels equips en cada temporada. A partir d'aquest, estudiarem quines variables són més important a l'hora d'obtenir victòries/derrotes durant les diferents èpoques i quines d'aquestes variables poden estar correlacionades.
+
+### Anàlisi 2.1: Selecció de les dades que es volen analitzar/comparar
+Per tant, les variables a utilitzar es tracten de les estadístiques més bàsiques que s'han aconseguit sobre el joc.
+```{r}
+# Seleccionem les variables:
+vars <- c("win_loss_pct","age", "off_rtg","def_rtg","fg","fg2","fg3","ft","orb","drb", "ast", "stl", "blk", "tov", "pf")
+description <- c("percentatge de victòries",
+                 "mitjana d'edat",
+                 "classificació ofensiva",
+                 "classificació defensiva",
+                 "mitjana de tirs de camp",
+                 "mitjana de tirs de dos punts",
+                 "mitjana de tirs de tres punts",
+                 "mitjana de tirs lliures",
+                 "mitjana de rebots ofensius",
+                 "mitjana de rebots defensius",
+                 "mitjana d'assistències",
+                 "mitjana de pilotes robades",
+                 "mitjana de bloquejos",
+                 "mitjana de pilotes perdudes",
+                 "mitjana de faltes personals")
+
+# Fem la taula:
+vars21 <- data.frame(variables = vars, desc = description)
+kable(vars21, booktabs = TRUE, caption = "Variables seleccionades per la correlació", 
+      col.names = c("Variable", "Descripció de la variable")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+### Anàlisi 2.2: Correlació entre les estadístiques més bàsiques
+Seguidament, comprovarem quina correlació poden tenir totes aquestes variables entre si, i entendre quin estil de joc predomina durant cada època dins de l'NBA i WNBA.
+
+Primer de tot, començarem amb l'NBA.
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+if(!require("corrplot")) install.packages("corrplot"); library("corrplot")
+
+nba_data <- df %>% filter(League == "NBA")
+wnba_data <- df %>% filter(League == "WNBA")
+
+n = c("win_loss_pct","age", "off_rtg","def_rtg","fg","fg2","fg3","ft","orb","drb", "ast", "stl", "blk", "tov", "pf")
+
+data <- nba_data %>% filter(decade == "80s")
+factors = data %>% select(all_of(n))
+res <- cor(factors)
+corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+data <- nba_data %>% filter(decade == "90s")
+factors = data %>% select(all_of(n))
+res <- cor(factors)
+corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+data <- nba_data %>% filter(decade == "00s")
+factors = data %>% select(all_of(n))
+res <- cor(factors)
+corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+data <- nba_data %>% filter(decade == "10s")
+factors = data %>% select(all_of(n))
+res <- cor(factors)
+corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+```
+
+Per tant, explicarem quines correlacions trobem en cada època i així doncs, entendre quin estil de joc predominava en cada època.
+
+Durant l'època dels 80, trobem que el fet que augmentava el percentatge de victòries es tractava de la capacitat ofensiva, en comptes de la defensiva. On trobem una correlació negativa per la segona. Altres factors que afavorien un millor percentatge de victòries eren les assistències, els rebots defensius i els tirs de camp. Si ens fixem en aquests últims, predominaven els tirs de dos punts. A més, les assistències presenten una forta correlació amb aquesta distància/puntuació. Finalment, observem com els rebots ofensius no eren gaire importants en aquesta època. Per tant, trobem un estil de joc on es necessitava una gran capacitat ofensiva basada en tirs de dos punts i assistències, on podem també destacar els rebots defensius com a capacitat defensiva.
+
+En l'època dels 90, trobem resultats bastant similars. Un punt diferenciador seria l'edat com a estadística amb més importància que en l'anterior època per aconseguir un millor percentatge de victòries. És a dir, afegim una mitjana d'edat més elevada, una plantilla amb més experiència per tal de guanyar partits. Pels tirs de camp, encara predominen els tirs de dos i les assistències en aquesta distància. Seguidament, podem observar com els rebots ofensius comencen a prendre més valor i aquests presenten una millor correlació amb els tirs de dos punts. Finalment, trobem com la mitja de pilotes perdudes presenta una correlació amb faltes personals. Per tant, podríem assumir que els equips comencen a cometre més faltes personals conjuntament amb les pilotes perdudes, és a dir, introduirien el concepte de faltes tàctiques. En aquesta època, encara trobem el factor ofensiu i afegim l'experiència dels jugadors com a variables claus per assolir victòries. Aquests trets ofensius són força similars als de l'anterior època. Un fet interessant és que es comença a tenir en compte la importància d'obtenir rebots ofensius i cometre faltes tàctiques en pèrdues de pilota.
+
+En l'època dels 00, comencem a observar una evolució de l'estil de joc. Si parlem de percentatge de victòries, trobem les mateixes correlacions observades en les anteriors èpoques. En aquest cas, els tirs de camp, es veuen diferenciats en els tirs de dos punts i tres punts. Per tant, iniciem una època on es comença a donar importància a aquesta nova distància. Així i tot, el joc associatiu es continua basant en els tirs de dos punts, deixant el tir de tres per individualitats. Per als rebots ofensius, veiem com tenen més correlació amb els tirs de dos que amb els de tres, podríem assumir que en realitzar un tir de dos punts, els jugadors presenten una millor col·locació a la pista contrària. Per tant, en aquesta època, hem analitzat com la capacitat ofensiva evoluciona a partir de l'aparició dels tirs de tres punts.
+
+Finalment, en l'època dels 10, seguim observant l'evolució de l'estil de joc. Per aconseguir victòries, trobem les mateixes correlacions. En aquest cas, quan parlem de tirs de camp, trobem una forta correlació amb els tirs de tres punts, deixant de banda els de dos punts. A més, les assistències també es veuen orientades cap a aquesta distància. És a dir, els equips donen una major importància al tir de tres com a tret característic de l'estil de joc i presenten un major joc associatiu dirigit a aquesta distància. Per tant, podem dir que l'estil de joc de l'NBA, ha evolucionat a partir d'un joc ofensiu que es basava en tirs de dos punts, cap a un estil de joc més tàctic (pèrdues de pilota i faltes) que es basa en els tirs de tres punts.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+data <- wnba_data %>% filter(decade == "90s")
+factors = data %>% select(all_of(n))
+res <- cor(factors)
+corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+data <- wnba_data %>% filter(decade == "00s")
+factors = data %>% select(all_of(n))
+res <- cor(factors)
+corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+data <- wnba_data %>% filter(decade == "10s")
+factors = data %>% select(all_of(n))
+res <- cor(factors)
+corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
+   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+
+```
+
+Durant l'època dels 90, trobem com a variables importants per aconseguir un millor percentatge de victòries, l'edat, la classificació ofensiva, els tirs de tres punts i els tirs lliures. En canvi, si observem les correlacions segons els tirs, observem com es presenta una forta correlació amb els tirs de dos punts. A més, també podem correlacionar aquests amb els rebots defensius i les assistències. En aquesta època, trobem un predomini dels tirs de dos punts en la capacitat ofensiva, però observem que tenen una major importància els tirs de tres a l'hora de guanyar partits. A més, el factor d'experiència també afavoreix a un millor percentatge de victòries.
+
+En l'època dels 00, veiem una petita evolució en l'estil de joc. Per assolir millors resultats, trobem la classificació ofensiva i les assistències. És a dir, el joc associatiu, en aquesta època presenta un millor rendiment. Si observem els tirs de camp, veiem una distribució entre els tirs de dos i tres punts. A més, les assistències també es distribueixen en aquests dos atributs. Finalment, tornem a observar com en l'NBA, com s'incorpora la importància dels rebots ofensius en els tirs de dos punts i cometre faltes tàctiques en pèrdua de pilotes. Per tant, hem analitzat l'evolució cap a un joc amb més recursos ofensius, tirs de dos i tres punts i un joc associatiu que presenta una gran importància a l'hora d'obtenir victòries.
+
+Finalment, a l'època dels 10, trobem com torna a evolucionar la capacitat ofensiva. En aquest cas, els tirs de dos punts tornen a ser importants per aconseguir un millor percentatge de victòries. Tornen a predominar els tirs de dos punts en els tirs de camp, en canvi, les assistències es veuen distribuïdes entre les dues distàncies. Per part dels rebots ofensius ja no presenten gaire importància. Així doncs, hem analitzat una altra evolució de l'estil de joc, on tornen a predominar els tirs de dos punts que tornen a ser claus per a obtenir victòries.
 
 # Exercici 5: Representació dels resultats.
 
