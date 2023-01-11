@@ -281,11 +281,11 @@ ggarrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
 
 Com es pot observar, veiem una alta relació en la mitjana de victòries aconseguides amb el percentatge de vegades que ha entrat l'equip a playoffs. Aquest fet pot resultar evident, ja que amb més victòries obtingudes en una temporada més possibilitats d'entrar a playoffs. Així i tot, si veiem a l'NBA, l'equip TOP 5 (Oklahoma City Thunder) té un percentatge proper a 60% de victòries i supera un 70% de vegades que ha classificat a playoffs. Per altra banda, si ho comparem amb el top 5 de la WNBA (Minnesota Lynx). Aquest té un percentatge de victòries proper al 50% i el seu % de vegades que ha entrat a playoffs és de quasi un 50% també. Fet que ens podria assegurar que aquest equip pot resultar irregular (diferència elevada de victòries/derrotes en les temporades) o que frega els límits de classificació cada temporada, fet que desemboca en aquesta irregularitat d'arribada a playoffs.
 
-
-### Anàlisi estadística descriptiva
+## Anàlisi 1: ha canviat la preferència dels llançaments?
 La introducció dels llançaments de tres a la lliga l'any 1979 va suposar un abans i un després a l'hora de jugar l'esport. No obstant, un espectador que no hagi vist res de bàsquet en els darrers 20 anys es podria sorprendre amb la quantitat aparent de llançaments de tres que es practiquen avui en dia. Amb l'aparició de fenòmens com Stephen Curry, el joc sembla haver canviat en els darrers anys. 
 
-Per analitzar-ho millor, farem un anàlisi dècada per dècada dels llançaments de tres. Ens fixarem en una variable en concret: `fg3a_per_fga_pct`. Aquesta variable indica (en percentatge) quants llançaments de tres ha realitzat un equip de tots els llançaments intentats. És a dir, si de 10 tirs de camp, 4 són triples, parlarem d'un 40% (en la variable estaria codificat com a 0.4). Triem aquesta variable en comptes del nombre de triples perquè ens pot donar una idea millor de si ha variat la selecció de llançaments. 
+### Anàlisi 1.1: Selecció de les dades que es volen analitzar/comparar
+Per analitzar-ho millor, farem un anàlisi dècada per dècada dels llançaments de tres. Ens fixarem en una variable en concret: `fg3a_per_fga_pct`. Aquesta variable indica (en percentatge) quants llançaments de tres ha realitzat un equip de tots els llançaments intentats. És a dir, si de 10 tirs de camp, 4 són triples, parlarem d'un 40% (en la variable estaria codificat com a 0.4). Triem aquesta variable en comptes del nombre de triples perquè ens pot donar una idea millor de si ha variat la selecció de llançaments.
 
 Així doncs, farem quatre grups diferents: del 79 fins el 90, del 90 fins el 2000, del 2000 fins el 2010 i del 2010 fins l'actualitat. Ho codificarem tot en una nova variable, que anomenarem `decade`:
 
@@ -336,6 +336,7 @@ kable(df3max, booktabs = TRUE,
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
+### Anàlisi 1.2: Comprovació de la normalitat i homogeneïtat de la variància
 Passarem ara a fer l'anàlisi estadístic d'aquestes dades. Abans, però, haurem de comprovar la normalitat per saber si haurem d'aplicar un test paramètric o un no paramètric. 
 
 ```{r}
@@ -351,7 +352,70 @@ kable(norm3, booktabs = TRUE,
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
-Com es pot veure a la taula, el p-valor és en tots els casos molt inferior a 0.05, el que permet refutar la hipotesi de normalitat
+Com es pot veure a la taula, el p-valor és en tots els casos molt inferior a 0.05, el que permet refutar la hipòtesi nul·la que assumeix una distribució normal. Per tant, podem dir que cap de les quatre mostres avaluades té una distribució normal per la variable `fg3a_per_fga_pct`. 
+
+Pel que fa a la variància, podem comparar les variàncies amb el test de Bartlett o el test de Levene. 
+
+```{r}
+# Fem els tests:
+bar <- bartlett.test(fg3a_per_fga_pct ~ decade, data = df %>% filter(decade != "Pre-three era"))
+lev <- leveneTest(fg3a_per_fga_pct ~ decade, data = df %>% filter(decade != "Pre-three era"))
+
+# Ho passem a dataframe:
+varCheck <- data.frame("Test" = c("Test de Bartlett", "Test de Levene"), "p-valor" = c(bar$p.value, lev$`Pr(>F)`[1]))
+
+# Fem la taula:
+kable(varCheck, booktabs = TRUE, 
+      caption = "Avaluació de l'homoscedasticitat amb els tests de Bartlett i Levene") %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+Podem comprovar mirant els p-valors d'ambdós tests que les mostres no tenen la mateixa variància, ja que en ambdós casos refutem la hipòtesi nul·la de igualtat de variàncies. 
+
+### Anàlisi 1.3: Aplicació de proves estadístiques per comparar els grups de dades.
+Per tant, tenim mostres on no hi ha una distribució normal dels valors i tampoc tenim una situació de homoscedasticitat. No obstant, com tenim una mostra força gran, podem aplicar el **teorema del límit central**, ja que, degut a la mida de la mostra, podem assumir que si fem les mitjanes aritmètiques de diferents mostrejos aleatoris, la distribució d'aquestes mitjanes aritmètiques serà gaussiana. 
+
+```{r}
+dec <- count(df, decade)
+kable(dec, booktabs = TRUE, caption = "Nombre d'observacions que tenim per dècada", 
+      col.names = c("Dècada", "Observacions")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+Pel que fa a la variància, podem aplicar el test de Welch, que és una alternativa a l'ANOVA clàssic quan no hi ha homoscedasticitat. Així doncs, mirarem si hi ha diferències entre les diferents dècades pel que fa al percentatge de llançaments de tres respecte el total de llançaments fets. 
+
+```{r}
+welch <- oneway.test(fg3a_per_fga_pct ~ decade, data = df %>% filter(decade != "Pre-three era"), var.equal = F)
+welDF <- data.frame("Test" = "ANOVA de Welch", "p-valor" = welch$p.value)
+kable(welDF, booktabs = TRUE, 
+      caption = "Test de Welch per avaluar diferència entre els llançaments de tres respecte el total per cada dècada") %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+```
+
+El p-valor de 0 ens indica que hi ha diferències. Ara bé, entre quins grups? Per saber-ho, necessitem fer un test _post hoc_. Podem utilitzar el test de Games-Howell, similar al test de Tukey (un dels més comuns), però aquest no assumeix igualtat de variàncies.
+
+```{r}
+library(rstatix)
+# Realitzem el test:
+gh <- games_howell_test(df %>% filter(decade != "Pre-three era"), 
+                  fg3a_per_fga_pct ~ decade, conf.level = 0.95, detailed = F)
+
+# Ho passem a dataframe:
+ghDF <- as.data.frame(gh)
+
+# Passem la columna p.adj a caràcter per no perdre decimals:
+ghDF$p.adj <- as.character(ghDF$p.adj)
+
+# Fem la taula:
+kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "Diferències entre dècades en la variable fg3a_per_fga_pct", 
+      col.names = c("Grup 1", "Grup 2", "p-Valor ajustat")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+```
+
+Així, veiem que hi ha diferències significatives entre tots els grups. No obstant, veiem que les diferències entre els 90s i els 2000s i entre els 2000s i els 2010s són menors que entre les altres dècades, un fet que podíem intuir amb la representació gràfica d'aquesta variable.
+
 
 
 
