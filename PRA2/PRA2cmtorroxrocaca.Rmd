@@ -408,7 +408,7 @@ ghDF <- as.data.frame(gh)
 ghDF$p.adj <- as.character(ghDF$p.adj)
 
 # Fem la taula:
-kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "Diferències entre dècades en la variable fg3a_per_fga_pct", 
+kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "$Diferències entre dècades a la variable fg3a_per_fga_pct$", 
       col.names = c("Grup 1", "Grup 2", "p-Valor ajustat")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
 
@@ -416,7 +416,38 @@ kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "Diferències entre dècade
 
 Així, veiem que hi ha diferències significatives entre tots els grups. No obstant, veiem que les diferències entre els 90s i els 2000s i entre els 2000s i els 2010s són menors que entre les altres dècades, un fet que podíem intuir amb la representació gràfica d'aquesta variable.
 
+## Anàlisi 2: Què fa guanyadors a aquells equips amb més victòries?
+Una altra cosa que ens preguntem és quins són els factors que més influeixen en les victòries de manera històrica. És a dir, quines variables tenen més pes quan, a final de temporada, mirem les victòries d'un equip.
 
+### Anàlisi 2.1: Selecció de les dades que es volen analitzar/comparar
+Com disposem d'un gran nombre de variables, farem una regressió lineal amb una selecció d'elles, utilitzant les victòries com a variable dependent. Com hem comentat abans, no seria raonable utilitzar el valor absolut de victòries, ja que aquest pot variar en funció del nombre de partits totals que es juguen; per tant, utilitzarem el percentatge de victòries (variable _win_loss_pct_). A continuació, detallem quines variables seleccionarem pel model:
+
+```{r}
+# Seleccionem les variables:
+vars <- c("age", "fg_pct", "fga", "fg3_pct", "fg3a", "ft_pct", "orb", "drb", "ast", "stl", "tov", "off_rtg", "def_rtg")
+description <- c("és l'edat mitjana de l'equip un factor influent?",
+                 "percentatge de llançaments de camps encertats",
+                 "total de llançaments intentats per partit",
+                 "percentatge de llançaments de 3 encertats",
+                 "total de llançaments de 3 intentats per partit",
+                 "percentatge de tirs lliures encertats",
+                 "rebots ofensius per partit",
+                 "rebots defensius per partit",
+                 "assistències per partit",
+                 "pilotes robades per partit",
+                 "pilotes perdudes per partit",
+                 "rating ofensiu de l'equip",
+                 "rating defensiu de l'equip")
+
+# Fem la taula:
+vars21 <- data.frame(variables = vars, desc = description)
+kable(vars21, booktabs = TRUE, caption = "Variables seleccionades pel model lineal", 
+      col.names = c("Variable", "Descripció de la variable")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+Així, hem fet una selecció d'estadístiques clàssiques de la NBA per a veure quines d'elles influeixen en el percentatge de victòries a final de temporada. Abans de tot, però, haurem de transformar algunes variables. 
 
 
 # Exercici 5: Representació dels resultats.
