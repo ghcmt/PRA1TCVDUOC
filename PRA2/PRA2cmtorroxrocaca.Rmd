@@ -306,7 +306,7 @@ ghDF <- as.data.frame(gh)
 ghDF$p.adj <- as.character(ghDF$p.adj)
 
 # Fem la taula:
-kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "$Diferències entre dècades a la variable fg3a_per_fga_pct$", 
+kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "Diferències entre dècades en el percentatge de llançament de tres respecte als llançaments total", 
       col.names = c("Grup 1", "Grup 2", "p-Valor ajustat")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
 
@@ -441,7 +441,7 @@ cor00plot <- corrplot(cor00, method = "color", col = col(200), addCoef.col = 'bl
 
 df10s <- df %>% filter(decade == "10s")
 cor10 <- cor(df10s[, vars], method = "spearman")
-cor10plot <- corrplot(cor10, method = "color", col = col(200), addCoef.col = 'black', type = "upper", tl.srt = 45, tl.col = "black", tl.cex = 0.7, cl.pos = 'n', diag = F, number.font = 1, number.cex = 0.6, title = "00s",  mar=c(0,0,1,0))
+cor10plot <- corrplot(cor10, method = "color", col = col(200), addCoef.col = 'black', type = "upper", tl.srt = 45, tl.col = "black", tl.cex = 0.7, cl.pos = 'n', diag = F, number.font = 1, number.cex = 0.6, title = "10s",  mar=c(0,0,1,0))
 
 # Posem el títol:
 title(main = "Correlació entre algunes de les principals mètriques segons la dècada", cex.main = 1.2,   font.main = 2, col.main= "black", 
@@ -449,50 +449,19 @@ title(main = "Correlació entre algunes de les principals mètriques segons la d
 
 ```
 
+Destaquem algunes coses d'aquestes correlacions:
 
+* **Anys 80**: la correlació positiva més forta amb el percentatge de victòries és amb el _rating_ ofensiu, mentre que la més negativa és amb el _rating_ defensiu (la qual cosa té sentit, ja que les millors defenses tindran _ratings_ defensius menors, mentre que les pitjors tindran un valor més elevat d'aquesta mètrica). En aquesta dècada també trobem la correlació més forta entre aquest percentatge i l'encert en els llançaments (tant totals com de dos, representats a les variables _fg_ i _fg2_, respectivament). Hi ha un parell d'aspectes curiosos d'aquesta època quan la comparem amb les altres:
+  
+  * El _rating_ ofensiu està correlacionat positivament sobretot amb l'encert en els llançaments i les assistències, però la resta de correlacions són dèbils (traient les pèrdues de pilotes o _tov_, que correlacionen negativament amb aquest _rating_ a totes les èpoques). En altres èpoques, veiem per exemple una relació més forta amb el _rating_ defensiu (especialment a partir dels 2000), el que ens suggeriria que els millors atacs també impliquen encaixar més punts. També hi ha una correlació més gran de les assistències en les èpoques posteriors als 80, el que podria tenir sentit ja que el joc es torna més col·laboratiu i menys individualista amb els anys. 
+  * El _rating_ defensiu no té cap correlació positiva forta amb cap altra variable. Té algunes negatives que tenen cert sentit: els rebots defensius, les pilotes robades i els taps. És a dir, estadístiques de caire molt defensiu, motiu pel qual és lògic que aquesta correlació sigui negativa. En altres èpoques, hi ha correlacions positives més fortes amb altres variables, com és el cas del percentatge de llançaments encertats. Com hem dit anteriorment, tenir els millors atacs pot significar també encaixar més punts (pel ritme de partit que imposen, per exemple).
+  
+* **Anys 90**: l'edat i els _ratings_ ofensius i defensius tenen les correlacions més fortes amb el percentatge de victòries. L'edat és un factor que correlaciona positivament amb les victòries en totes les èpoques, però en aquesta és on la correlació és més forta. En aquesta dècada ja veiem que el percentatge de llançaments encertats (especialment de dos punts) sembla influir menys en les victòries que en la dècada anterior. Comencem a veure les diferències pel que fa a les correlacions amb els ratings ofensius i defensiu si ho comparem amb els 80. Comencem a veure, per exemple, que capturar més rebots defensius i fer més taps correlaciona positivament amb un _rating_ ofensiu superior. Pel que fa al _rating_ defensiu, veiem que els percentatges d'encert en el llançament ja són un factor molt influent en aquest, mentre que estadístiques defensives com els rebots o les pilotes robades gairebé ja no tenen relació amb ell. Podem començar a intuir canvis en el joc.
 
+* **Anys 2000**: segueix la tendència observada als 90 pel que fa a l'edat i els _ratings_ com principals correlacions amb les victòries. El canvi més important respecte a la dècada passada és la correlació entre els percentatges d'encert en llançaments de tres (variable _fg3_) i el percentatge d'encert de dos (variable _fg_). Aquesta correlació és prou negativa als 80 i força més als 90s. És curiós perquè això ens indicaria que a major percentatge d'encert des del triple, menys percentatge d'encert en els dos punts. Ens podria suggerir que en els 90 van començar a aparèixer els especialistes de tres, és a dir, jugadors que anaven molt bé des de la línia de tres, però no tan bé des de distàncies més curtes. Aquesta correlació és pràcticament 0 als 2000, el que ens diu que no hi ha cap relació entre aquests dos paràmetres. Relacionat amb això, als 2000 és on comença a tenir un pes molt important el percentatge de llançaments de tres en el _rating_ ofensiu i també en el percentatge d'encerts en general. Per tant, en aquesta època, hem analitzat com la capacitat ofensiva evoluciona a partir de l'aparició dels tirs de tres punts. 
 
+* **Anys 2010s fins l'actualitat**: el que més destaca és la importància del triple. Veiem que és l'era on menys correlació hi ha entre l'encert del llançament de dos i l'encert global, el que es pot explicar per la preponderància del tir de tres i la millora en l'encert d'aquest llançament respecte a dècades passades. Destaquem també la correlació entre les assistències i el percentatge d'encert de tres, que és la més positiva en aquesta era. Podríem dir, doncs, Per tant, l'estil de joc de l'NBA, ha evolucionat a partir d'un joc ofensiu que es basava en tirs de dos punts, cap a un estil on els tirs de tres punts tenen un rol central. 
 
-
-
-
-Per tant, explicarem quines correlacions trobem en cada època i així doncs, entendre quin estil de joc predominava en cada època.
-
-Durant l'època dels 80, trobem que el fet que augmentava el percentatge de victòries es tractava de la capacitat ofensiva, en comptes de la defensiva. On trobem una correlació negativa per la segona. Altres factors que afavorien un millor percentatge de victòries eren les assistències, els rebots defensius i els tirs de camp. Si ens fixem en aquests últims, predominaven els tirs de dos punts. A més, les assistències presenten una forta correlació amb aquesta distància/puntuació. Finalment, observem com els rebots ofensius no eren gaire importants en aquesta època. Per tant, trobem un estil de joc on es necessitava una gran capacitat ofensiva basada en tirs de dos punts i assistències, on podem també destacar els rebots defensius com a capacitat defensiva.
-
-En l'època dels 90, trobem resultats bastant similars. Un punt diferenciador seria l'edat com a estadística amb més importància que en l'anterior època per aconseguir un millor percentatge de victòries. És a dir, afegim una mitjana d'edat més elevada, una plantilla amb més experiència per tal de guanyar partits. Pels tirs de camp, encara predominen els tirs de dos i les assistències en aquesta distància. Seguidament, podem observar com els rebots ofensius comencen a prendre més valor i aquests presenten una millor correlació amb els tirs de dos punts. Finalment, trobem com la mitja de pilotes perdudes presenta una correlació amb faltes personals. Per tant, podríem assumir que els equips comencen a cometre més faltes personals conjuntament amb les pilotes perdudes, és a dir, introduirien el concepte de faltes tàctiques. En aquesta època, encara trobem el factor ofensiu i afegim l'experiència dels jugadors com a variables claus per assolir victòries. Aquests trets ofensius són força similars als de l'anterior època. Un fet interessant és que es comença a tenir en compte la importància d'obtenir rebots ofensius i cometre faltes tàctiques en pèrdues de pilota.
-
-En l'època dels 00, comencem a observar una evolució de l'estil de joc. Si parlem de percentatge de victòries, trobem les mateixes correlacions observades en les anteriors èpoques. En aquest cas, els tirs de camp, es veuen diferenciats en els tirs de dos punts i tres punts. Per tant, iniciem una època on es comença a donar importància a aquesta nova distància. Així i tot, el joc associatiu es continua basant en els tirs de dos punts, deixant el tir de tres per individualitats. Per als rebots ofensius, veiem com tenen més correlació amb els tirs de dos que amb els de tres, podríem assumir que en realitzar un tir de dos punts, els jugadors presenten una millor col·locació a la pista contrària. Per tant, en aquesta època, hem analitzat com la capacitat ofensiva evoluciona a partir de l'aparició dels tirs de tres punts.
-
-Finalment, en l'època dels 10, seguim observant l'evolució de l'estil de joc. Per aconseguir victòries, trobem les mateixes correlacions. En aquest cas, quan parlem de tirs de camp, trobem una forta correlació amb els tirs de tres punts, deixant de banda els de dos punts. A més, les assistències també es veuen orientades cap a aquesta distància. És a dir, els equips donen una major importància al tir de tres com a tret característic de l'estil de joc i presenten un major joc associatiu dirigit a aquesta distància. Per tant, podem dir que l'estil de joc de l'NBA, ha evolucionat a partir d'un joc ofensiu que es basava en tirs de dos punts, cap a un estil de joc més tàctic (pèrdues de pilota i faltes) que es basa en els tirs de tres punts.
-
-```{r echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-
-data <- wnba_data %>% filter(decade == "90s")
-factors = data %>% select(all_of(n))
-res <- cor(factors)
-corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
-   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
-
-data <- wnba_data %>% filter(decade == "00s")
-factors = data %>% select(all_of(n))
-res <- cor(factors)
-corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
-   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
-
-data <- wnba_data %>% filter(decade == "10s")
-factors = data %>% select(all_of(n))
-res <- cor(factors)
-corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
-   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
-
-```
-
-Durant l'època dels 90, trobem com a variables importants per aconseguir un millor percentatge de victòries, l'edat, la classificació ofensiva, els tirs de tres punts i els tirs lliures. En canvi, si observem les correlacions segons els tirs, observem com es presenta una forta correlació amb els tirs de dos punts. A més, també podem correlacionar aquests amb els rebots defensius i les assistències. En aquesta època, trobem un predomini dels tirs de dos punts en la capacitat ofensiva, però observem que tenen una major importància els tirs de tres a l'hora de guanyar partits. A més, el factor d'experiència també afavoreix a un millor percentatge de victòries.
-
-En l'època dels 00, veiem una petita evolució en l'estil de joc. Per assolir millors resultats, trobem la classificació ofensiva i les assistències. És a dir, el joc associatiu, en aquesta època presenta un millor rendiment. Si observem els tirs de camp, veiem una distribució entre els tirs de dos i tres punts. A més, les assistències també es distribueixen en aquests dos atributs. Finalment, tornem a observar com en l'NBA, com s'incorpora la importància dels rebots ofensius en els tirs de dos punts i cometre faltes tàctiques en pèrdua de pilotes. Per tant, hem analitzat l'evolució cap a un joc amb més recursos ofensius, tirs de dos i tres punts i un joc associatiu que presenta una gran importància a l'hora d'obtenir victòries.
-
-Finalment, a l'època dels 10, trobem com torna a evolucionar la capacitat ofensiva. En aquest cas, els tirs de dos punts tornen a ser importants per aconseguir un millor percentatge de victòries. Tornen a predominar els tirs de dos punts en els tirs de camp, en canvi, les assistències es veuen distribuïdes entre les dues distàncies. Per part dels rebots ofensius ja no presenten gaire importància. Així doncs, hem analitzat una altra evolució de l'estil de joc, on tornen a predominar els tirs de dos punts que tornen a ser claus per a obtenir victòries.
 
 
 ## Anàlisi 3: És possible predir si un equip arribarà o no a playoffs en funció de les seves estadístiques?
