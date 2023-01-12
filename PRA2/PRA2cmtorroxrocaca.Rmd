@@ -27,6 +27,8 @@ library(dplyr)
 library(car)
 library(ggpubr)
 library(corrplot)
+library(rminer)
+library(caret)
 ```
 
 
@@ -435,12 +437,17 @@ Destaquem algunes coses d'aquestes correlacions:
 En aquest últim estudi, mirarem de realitzar un predictor a partir d'un model supervisat per tal de predir si un equip es pot classificar a playoffs segons les estadístiques recollides durant la temporada. Per aquest cas, tornarem a dividir el conjunt de dades per èpoques, per continuar entenent l'evolució històrica de l'NBA i la WNBA.
 
 ### Anàlisi 3.1: Selecció de les dades que es volen analitzar/comparar
-Per a seleccionar les variables a utilitzar, mirarem d'afegir el % d'encerts per les estadístiques de tirs de camp. Aquesta ens permet entendre de millor el rendiment de l'equip sobre aquesta estadística. Així i tot, continuarem usant certes variables d'anteriors anàlisis.
+Per a seleccionar les variables a utilitzar, mirarem d'afegir el % d'encerts per les estadístiques de tirs de camp. Aquesta ens permet entendre de millor el rendiment de l'equip sobre aquesta estadística. Així i tot, continuarem usant certes variables d'anteriors anàlisis i n'afegirem algunes de noves.
+
+```{r}
+view(df)
+```
+
 
 ```{r}
 # Seleccionem les variables:
-vars <- c("age", "fg_pct", "fga", "fg3_pct", "fg3a", "ft_pct", "orb", "drb", "ast", "stl", "tov", "off_rtg", "def_rtg")
-description <- c("és l'edat mitjana de l'equip un factor influent?",
+vars <- c("age", "fg_pct", "fga", "fg3_pct", "fg3a", "ft_pct", "orb", "drb", "ast", "stl", "tov", "off_rtg", "def_rtg", "pace", "ts_pct", "efg_pct", "opp_efg_pct", "sos")
+description <- c("edat mitjana",
                  "percentatge de llançaments de camps encertats",
                  "total de llançaments intentats per partit",
                  "percentatge de llançaments de 3 encertats",
@@ -452,7 +459,12 @@ description <- c("és l'edat mitjana de l'equip un factor influent?",
                  "pilotes robades per partit",
                  "pilotes perdudes per partit",
                  "rating ofensiu de l'equip",
-                 "rating defensiu de l'equip")
+                 "rating defensiu de l'equip",
+                 "Estimació de posessions per partit",
+                 "Percentatge True Shooting (tenint en compte tot tipus de llançaments)",
+                 "Percentatge de tirs de camp efectius (ajustant pel valor del triple",
+                 "Percentatge de tirs de camp efectius de l'oponent",
+                 "Dificultat del calendari (nivell dels equips rivals)")
 
 # Fem la taula:
 vars21 <- data.frame(variables = vars, desc = description)
@@ -472,12 +484,10 @@ df00s$Playoffs.f <- factor(df00s$Playoffs)
 df10s$Playoffs.f <- factor(df10s$Playoffs)
 
 # Seleccionem les variables a utilitzar
-df80s <- select(df80s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
-df90s <- select(df90s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
-df00s <- select(df00s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
-df10s <- select(df10s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
-
-if(!require("rminer")) install.packages("rminer"); library("rminer")
+df80s <- select(df80s, Playoffs.f, vars)
+df90s <- select(df90s, Playoffs.f, vars)
+df00s <- select(df00s, Playoffs.f, vars)
+df10s <- select(df10s, Playoffs.f, vars)
 
 set.seed(12345)
 
@@ -498,18 +508,25 @@ h10s <- holdout(y=df10s$Playoffs.f, ratio=2/3, mode="stratified")
 train10s <- df10s[h10s$tr,]
 test10s <- df10s[h10s$ts,]
 
-dim(train80s)
-dim(test80s)
+dims <- data.frame(conjunt = c("Entrenament", "Test"), 
+                   obs = c(nrow(train80s), nrow(test80s)),
+                   cols = c(ncol(train80s), ncol(test80s)))
+
+kable(dims, booktabs = TRUE, 
+      caption = "Observacions i variables dels conjunts d'entrenament i test dels anys 80", 
+      col.names = c("Conjunt", "Nombre d'observacions", "Nombre de variables")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
-En aquest cas, podem observar les dimensions dels primers subconjunts que fan referència a l'època dels 80. Trobem per al subconjunt d'entrenament 154 files amb un total de 14 variables. Així doncs, per al subconjunt de prova, trobem 77 files i 14 variables.
+En aquest cas, podem observar les dimensions dels primers subconjunts que fan referència a l'època dels 80. Trobem per al subconjunt d'entrenament 154 files amb un total de 19 variables. Així doncs, per al subconjunt de prova, trobem 77 files i 19 variables.
 
 ### Anàlisi 3.3: Creació del model i avaluació a partir de la utilització de la regressió logística.
 
-El mètode de model supervisat seleccionat es tracta del model de regressió logística. Aquest ens permetrà predir i classificar la variable categòrica _Playoffs_ per tal de determinar si un equip pot entrar a aquests segons les seves estadístiques. Primer de tot, crearem el model a partir del subconjunt d'entrenament i finalment, mirarem de realitzar la predicció amb el subconjunt de prova per tal d'avaluar-lo. Per avaluar, crearem una matriu de confusió per cada una de les èpoques.
+El mètode de model supervisat seleccionat es tracta del model de regressió logística. Aquest ens permetrà predir i classificar la variable categòrica _Playoffs_ per tal de determinar si un equip pot entrar a aquests segons les seves estadístiques. No avaluarem en aquest cas la normalitat ni la variància de les variables ja que els models logístics no assumeixen que les dades segueixen una distribució normal ni tampoc homoscedasticitat. 
+
+Primer de tot, crearem el model a partir del subconjunt d'entrenament i finalment, mirarem de realitzar la predicció amb el subconjunt de prova per tal d'avaluar-lo. Per avaluar, crearem una matriu de confusió per cada una de les èpoques.
 
 ```{r}
-
 # Creem els diferents models de regressió logística
 d80s.model = glm(Playoffs.f ~., data = train80s, family = binomial)
 #summary(d80s.model)
@@ -523,7 +540,7 @@ d00s.model = glm(Playoffs.f ~., data = train00s, family = binomial)
 d10s.model = glm(Playoffs.f ~., data = train10s, family = binomial)
 #summary(d10s.model)
 
-# Creem la predició i la matriu de confusió sobre els resultats
+# Creem la predicció i la matriu de confusió sobre els resultats
 d80s.prob = predict(d80s.model, test80s, type="response")
 d80s.pred = rep("No", dim(train80s)[1])
 d80s.pred[d80s.prob > .5] = "Yes"
@@ -547,31 +564,106 @@ mat10s <- table(d10s.pred, train10s$Playoffs.f)
 ```
 
 Seguidament, calcularem el percentatge de registres correctament classificats per cada una de les èpoques.
+
 ```{r}
 mat80s
-perc<-100 * sum(diag(mat80s)) / sum(mat80s)
-print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+kable(mat80s, booktabs = TRUE, 
+      caption = "Matriu de confusió amb el model pels anys 80", 
+      col.names = c("No", "Yes")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+sens <- round(sensitivity(mat80s), 3) * 100
+spec <- round(specificity(mat80s), 3) * 100
+prec <- round(precision(mat80s), 3) * 100
 ```
+
+```{r}
+params <- c("Sensitivitat", "Especificitat", "Precisió")
+desc <- c("Proporció de registres positius correctament identificats",
+                 "Proporció de registres negatius correctament identificats",
+                 "Proporció de registres classificats com a positius que ho són")
+values <- c(sens, spec, prec)
+modSum <- data.frame(pars = params, description = desc, val = values)
+
+kable(modSum, booktabs = TRUE, 
+      caption = "Mesures de la qualitat del model per la dècada dels 80", 
+      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
 
 ```{r}
 mat90s
-perc<-100 * sum(diag(mat90s)) / sum(mat90s)
-print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+kable(mat90s, booktabs = TRUE, 
+      caption = "Matriu de confusió amb el model pels anys 90", 
+      col.names = c("No", "Yes")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+sens <- round(sensitivity(mat90s), 3) * 100
+spec <- round(specificity(mat90s), 3) * 100
+prec <- round(precision(mat90s), 3) * 100
 ```
+
+```{r}
+kable(modSum, booktabs = TRUE, 
+      caption = "Mesures de la qualitat del model per la dècada dels 90", 
+      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
 
 ```{r}
 mat00s
-perc<-100 * sum(diag(mat00s)) / sum(mat00s)
-print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+kable(mat00s, booktabs = TRUE, 
+      caption = "Matriu de confusió amb el model pels anys 2000", 
+      col.names = c("No", "Yes")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+sens <- round(sensitivity(mat00s), 3) * 100
+spec <- round(specificity(mat00s), 3) * 100
+prec <- round(precision(mat00s), 3) * 100
 ```
 
 ```{r}
-mat10s
-perc<-100 * sum(diag(mat10s)) / sum(mat10s)
-print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+kable(modSum, booktabs = TRUE, 
+      caption = "Mesures de la qualitat del model per la dècada dels 2000", 
+      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
+
+```{r}
+mat10s
+kable(mat10s, booktabs = TRUE, 
+      caption = "Matriu de confusió amb el model pels anys 2010 fins ara", 
+      col.names = c("No", "Yes")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+sens <- round(sensitivity(mat10s), 3) * 100
+spec <- round(specificity(mat10s), 3) * 100
+prec <- round(precision(mat10s), 3) * 100
+```
+
+```{r}
+kable(modSum, booktabs = TRUE, 
+      caption = "Mesures de la qualitat del model per la dècada dels 2010 fins l'actualitat", 
+      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+Pel que fa als paràmetres dels nostres models, tenim la següent taula:
+
+```{r}
+params <- c("Sensitivitat", "Especificitat", "Precisió")
+desc <- c("Proporció de registres positius correctament identificats",
+                 "Proporció de registres negatius correctament identificats",
+                 "Proporció de registres classificats com a positius que ho són")
+values <- c(sens, spec, prec)
+modSum <- data.frame(pars = params, description = desc, val = values)
+
+```
+
+
 Podem observar com els models que hem generat ens ofereixen una qualitat bastant baixa. Tots aquests ens diuen que només tenen una precisió del 50%. 
+
+corba ROC
 
 # Exercici 5: Representació dels resultats.
 
