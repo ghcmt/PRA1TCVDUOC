@@ -26,6 +26,7 @@ library(kableExtra)
 library(dplyr)
 library(car)
 library(ggpubr)
+library(corrplot)
 ```
 
 
@@ -157,7 +158,7 @@ El que s'ha decidit és no realitzar cap modificació, ja que aquests valors só
 # Exercici 4: Anàlisi de les dades
 Abans de començar amb l'anàlisi, haurem de tenir en compte que els valors absoluts ens poden portar a error i que haurem d'optar, en general, pels relatius (percentatges o mètriques ajustades per partit o possessions). Això és degut a que la NBA i la WNBA tenen un nombre de partits totals diferents, però també perquè la pròpia NBA ha evolucionat en aquest aspecte: en el seu inici es jugaven molts menys partits. Veiem-ho amb un gràfic, on utilitzarem les dades de partits des de 1973:
 
-```{r}
+```{r fig.height=3, fig.width=8}
 library(ggplot2)
 # Creem la columna 'games' per guardar la informació del total de partits que ha jugat cada equip:
 df3$games <- df3$wins + df3$losses
@@ -175,111 +176,8 @@ theme_classic()
 
 Com es pot veure, en general les temporades a la NBA han tingut més de 80 partits, però no sempre ha sigut així. Pel que fa a la WNBA, hi ha més variació en aquest número de partits, però es troba al voltant dels 30. És per això que, en cas d'utilitzar valors absoluts, haurem de comprovar prèviament que estiguem comparant entre temporades amb el mateix número de partits. 
 
+Pel que fa als subapartats de l'exercici en sí, hem decidit que, per facilitar la lectura, els farem consecutius per a cadascuna de les tres preguntes que ens hem plantejat. És a dir, farem la selecció, comprovació de normalitat i les aplicacions dels estadístics de forma contínua per a cada anàlisi, amb la idea de mantenir el fil i els raonaments particulars fins acabar l'anàlisi. 
 
-## 4.1: Selecció dels grups de dades que es volen analitzar/comparar.
-Per seleccionar els grups de dades a comparar, farem èmfasis en els mètodes d'anàlisi que es volen realitzar per tal d'escollir quines variables/camps ens poden ajudar per donar resposta a aquests.
-
-+ **Anàlisi estadística descriptiva**: Realitzarem una exploració de les dades per tal de veure quins equips presenten una mitjana de % de victòries més elevada durant els anys. Així doncs, ho compararem amb el percentatge de les vegades que ha estat classificat cada equip a playoffs per visualitzar la relació que poden tenir. A més, veurem l'evolució d'estadístiques bàsiques de cada temporada per veure la seva evolució i entendre quina tendència segueixen per avaluar com ha pogut canviar l'estil de joc de les grans lligues durant els anys.
-
-+ **Anàlisi estadística inferencial**: En aquest cas, realitzarem diferents regressions entre les estadístiques bàsiques en comparació a les victòries per tal d'analitzar la importància d'aquestes en el rendiment dels equips.
-
-+ **Model supervisat**: Finalment, realitzarem un model predictor que ens identifiqui si un equip té la possibilitat d'arribar a playoffs segons certes variables més avançades que intervenen en el joc.
-
-Per tant, el conjunt de dades final tindria les següents variables:
-
-**Faltaria ficar la taula. Pendent del que vulguis fer**
-
-## 4.2: Comprovació de la normalitat i homogeneïtat de la variància.
-
-Per tal de realitzar la comprovació de la normalitat, ens basarem en el test de Shapiro-Wilk, ja que es tracta dels més potents per contrastar aquesta. Assumirem com a hipòtesi nul·la que la població està distribuïda normalment. Direm que $\alpha$ = 0.05, per tant, si p-valor és major a $\alpha$, assumirem que les dades segueixen una distribució normal.
-
-```{r}
-shapiro.test(df3$fg3)
-```
-
-Seguidament, per comprovar l'homogeneïtat de la variància, ens basarem en els tests de Levene, per les que segueixen una distribució normal i Fligner-Killeen, per les que no les compleixen. Assumirem com a hipòtesi nul·la la igualtat de variàncies en els grups de dades. Direm que $\alpha$ = 0.05, per tant, si p-valor és major a $\alpha$, no podrem refutar aquesta hipòtesi nul·la i, per tant, podrem dir que hi haurà igualtat de variàncies. 
-
-```{r}
-library(car)
-#leveneTest(wins ~ fg3, data = df3)
-
-fligner.test(wins ~ fg3, data = df3)
-
-```
-
-## 4.3: Aplicació de proves estadístiques per comparar els grups de dades. Aplicar almenys tres mètodes d'anàlisi diferents. 
-
-Seguidament, aplicarem les proves estadístiques descrites anteriorment.
-
-### Anàlisi estadística descriptiva
-Començarem agrupant el percentatge de victòries i percentatge de vegades que ha entrat a playoffs cada equip i realitzarem la mitjana a partir del nombre de temporades. D'aquesta forma, estudiarem quins equips són els equips més guanyadors durant els anys i com es veu influenciat en les classificacions als playoffs.
-```{r fig.height=10, fig.width=10}
-library(ggpubr)
-#Discretitzem variable
-df3$disc_playoffs[df3$Playoffs == "Yes"] <- 1
-df3$disc_playoffs[df3$Playoffs == "No"] <- 0
-
-#Filtrem per lliga
-nba_wins <- df3 %>% filter(League == "NBA")
-wnba_wins <- df3 %>% filter(League == "WNBA")
-
-#Calculem quantes temporades ha jugat cada equip
-nba_seasons <- nba_wins %>%
-                group_by(nba_wins$Team) %>%
-                tally()
-
-wnba_seasons <- wnba_wins %>%
-                group_by(wnba_wins$Team) %>%
-                tally()
-
-nba_wins <- select(nba_wins, Team, win_loss_pct, disc_playoffs)
-wnba_wins <- select(wnba_wins, Team, win_loss_pct, disc_playoffs)
-
-#Sumem els valors a estudiar
-nba_wins <- aggregate(.~Team, data=nba_wins, FUN=sum)
-wnba_wins <- aggregate(.~Team, data=wnba_wins, FUN=sum)
-
-#Calculem percentatges
-nba_wins$all_wins_pct <- nba_wins$win_loss_pct / nba_seasons$n
-nba_wins$playoffs_pct <- nba_wins$disc_playoffs / nba_seasons$n
-wnba_wins$all_wins_pct <- wnba_wins$win_loss_pct / wnba_seasons$n
-wnba_wins$playoffs_pct <- wnba_wins$disc_playoffs / wnba_seasons$n
-
-res_nba <- nba_wins %>% arrange(desc(all_wins_pct)) %>%
-                    slice(1:5)
-
-res_wnba <- wnba_wins %>% arrange(desc(all_wins_pct)) %>%
-                    slice(1:5)
-
-p1 <- ggplot(data=res_nba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (NBA)") + xlab("Equip") + ylab("Percentatge") +  
-  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
-            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
-  theme(axis.text.x = element_blank())
-
-p2 <- ggplot(data=res_wnba, aes(x=reorder(Team, -all_wins_pct), y=all_wins_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("Equips amb millor % de victòries (WNBA)") + xlab("Equip") + ylab("Percentatge") +  
-  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
-            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
-  theme(axis.text.x = element_blank())
-
-p3 <- ggplot(data=res_nba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (NBA)") + xlab("Equip") + ylab("Percentatge") +  
-  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
-            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
-  theme(axis.text.x = element_blank())
-
-p4 <- ggplot(data=res_wnba, aes(x=reorder(Team, -playoffs_pct), y=playoffs_pct)) + geom_bar(stat="identity", fill=rgb(0.2,0.4,0.6,0.6), position=position_dodge()) +  theme_minimal() + scale_fill_brewer(palette="Blues") + ggtitle("% de playoffs dels equips amb més victòries (WNBA)") + xlab("Equip") + ylab("Percentatge") +  
-  geom_text(aes(label = Team), colour = "white", size = 5, angle = 90, 
-            hjust = 1.5, vjust = 0, position = position_dodge(.9)) + 
-  theme(axis.text.x = element_blank()) 
-
-if(!require('xfun')) install.packages('xfun'); library('xfun')
-
-
-ggarrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
-#multiplot(p1, p2, p3, p4, cols = 2) # de quin paquet és aquesta funció??
-
-```
-
-Com es pot observar, veiem una alta relació en la mitjana de victòries aconseguides amb el percentatge de vegades que ha entrat l'equip a playoffs. Aquest fet pot resultar evident, ja que amb més victòries obtingudes en una temporada més possibilitats d'entrar a playoffs. Així i tot, si veiem a l'NBA, l'equip TOP 5 (Oklahoma City Thunder) té un percentatge proper a 60% de victòries i supera un 70% de vegades que ha classificat a playoffs. Per altra banda, si ho comparem amb el top 5 de la WNBA (Minnesota Lynx). Aquest té un percentatge de victòries proper al 50% i el seu % de vegades que ha entrat a playoffs és de quasi un 50% també. Fet que ens podria assegurar que aquest equip pot resultar irregular (diferència elevada de victòries/derrotes en les temporades) o que frega els límits de classificació cada temporada, fet que desemboca en aquesta irregularitat d'arribada a playoffs.
 
 ## Anàlisi 1: ha canviat la preferència dels llançaments?
 La introducció dels llançaments de tres a la lliga l'any 1979 va suposar un abans i un després a l'hora de jugar l'esport. No obstant, un espectador que no hagi vist res de bàsquet en els darrers 20 anys es podria sorprendre amb la quantitat aparent de llançaments de tres que es practiquen avui en dia. Amb l'aparició de fenòmens com Stephen Curry, el joc sembla haver canviat en els darrers anys. 
@@ -304,7 +202,7 @@ df$decade <- factor(df$decade, levels = c("Pre-three era", "80s", "90s", "00s", 
 
 Amb un boxplot podem comparar les èpoques a primera vista:
 
-```{r}
+```{r fig.height=4, fig.width=8}
 # Grafiquem, excloent abans les temporades sense llançaments de tres:
 ggplot(df %>% filter(decade != "Pre-three era"), 
        aes(x=decade, y=fg3a_per_fga_pct*100, fill=League)) + geom_boxplot() + 
@@ -315,7 +213,7 @@ ggplot(df %>% filter(decade != "Pre-three era"),
 
 Veiem que, efectivament, hi ha una tendència a llançar més de tres amb els anys. Utilitzem ara un gràfic de dispersió per a observar aquesta tendència amb el pas de les temporades:
 
-```{r}
+```{r fig.height=4, fig.width=8}
 ggplot(df %>% filter(decade != "Pre-three era"), 
        aes(x=Season, y = fg3a_per_fga_pct*100, color = decade)) + 
   geom_point(size=0.7) + 
@@ -449,11 +347,14 @@ kable(vars21, booktabs = TRUE, caption = "Variables seleccionades pel model line
 
 Així, hem fet una selecció d'estadístiques clàssiques de la NBA per a veure quines d'elles influeixen en el percentatge de victòries a final de temporada. Abans de tot, però, haurem de transformar algunes variables. 
 
-## Anàlisi 2: estudi sobre les estadístiques bàsiques i generals sobre el joc
-Dins de l'NBA, cada un dels equips que han competit o encara competeixen han desenvolupat un estil de joc característic a partir d'aprofundir i millorar en certes capacitats ofensives/defensives que els ha permès aconseguir victòries i obtenir el rendiment desitjat. Gràcies al conjunt de dades que presentem, podem observar quin estil de joc ha presentat cada un dels equips en cada temporada. A partir d'aquest, estudiarem quines variables són més important a l'hora d'obtenir victòries/derrotes durant les diferents èpoques i quines d'aquestes variables poden estar correlacionades.
+## Anàlisi 2: ha canviat l'estil de joc durant els anys?
+Dins de l'NBA, cadascun dels equips que han competit o encara competeixen han desenvolupat un estil de joc característic a partir d'aprofundir i millorar en certes capacitats ofensives/defensives que els ha permès aconseguir victòries i obtenir el rendiment desitjat. A més, cada època en concret té les seves peculiaritats pròpies, ja sigui per les regles del moment, pels equips dominadors o per grans estrelles que obliguen als equips a evolucionar per adaptar-se. 
 
 ### Anàlisi 2.1: Selecció de les dades que es volen analitzar/comparar
+Com disposem d'un gran nombre de variables, ens hem preguntat si podríem veure, amb l'ajuda d'aquestes, si ha canviat la forma de jugar en les últimes dècades de la lliga. Amb aquesta idea al cap, volem saber si la correlació entre algunes de les variables més importants ha anat canviant amb els anys o si, pel contrari, s'ha mantingut constant. A més, també ens preguntem quina és la correlació entre aquestes variables i les victòries aconseguides durant la temporada en funció de l'època, amb l'objectiu final de veure si quines variables es correlacionen més fortament amb les victòries. 
+
 Per tant, les variables a utilitzar es tracten de les estadístiques més bàsiques que s'han aconseguit sobre el joc.
+
 ```{r}
 # Seleccionem les variables:
 vars <- c("win_loss_pct","age", "off_rtg","def_rtg","fg","fg2","fg3","ft","orb","drb", "ast", "stl", "blk", "tov", "pf")
@@ -513,50 +414,47 @@ kable(normSum, booktabs = TRUE,
 
 ```
 
-Veiem que aproximadament un terç de les distribucions no són gaussianes, ja que refutem la hipòtesi nul·la en 32 dels 105 casos. Així, podem portar a terme una transformació logarítmica d'algunes variables per veure si així la distribució s'assembla més a una normal.
+Veiem que aproximadament un terç de les distribucions no són gaussianes, ja que refutem la hipòtesi nul·la en 32 dels 105 casos. 
 
-```{r}
-norm <- norm22 %>% group_by(varname) %>% count(p.value < 0.05)
-norm %>% filter(`p.value < 0.05` == TRUE) %>% arrange(desc(n))
+### Anàlisi 2.3: Aplicació de proves estadístiques 
+Com algunes de les mostres que volem comparar no tenen distribució normal, hem d'utilitzar un mètode no paramètric, en comptes d'utilitzar la típica correlació de Pearson. En aquest cas, farem servir el mètode de correlació per rangs de Spearman, que és un mètode no paramètric.
 
-```
+```{r Correlació de Spearman, fig.width = 8, fig.height = 8, fig.align = "center", out.width = "110%"}
+# Fem una correlació per cada dècada i guardem els gràfics en una nova variable:
+par(mfrow=c(2,2), oma=c(0,0,3,0))
 
+# Definim els colors
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-if(!require("corrplot")) install.packages("corrplot"); library("corrplot")
+# Fem les correlacions i els gràfics:
+df80s <- df %>% filter(decade == "80s")
+cor80 <- cor(df80s[, vars], method = "spearman")
+cor80plot <- corrplot(cor80, method = "color", col = col(200), addCoef.col = 'black', type = "upper", tl.srt = 45, tl.col = "black", tl.cex = 0.7, cl.pos = 'n', diag = F, number.font = 1, number.cex = 0.6, title = "80s",  mar=c(0,0,1,0))
 
-nba_data <- df %>% filter(League == "NBA")
-wnba_data <- df %>% filter(League == "WNBA")
+df90s <- df %>% filter(decade == "90s")
+cor90 <- cor(df90s[, vars], method = "spearman")
+cor90plot <- corrplot(cor90, method = "color", col = col(200), addCoef.col = 'black', type = "upper", tl.srt = 45, tl.col = "black", tl.cex = 0.7, cl.pos = 'n', diag = F, number.font = 1, number.cex = 0.6, title = "90s",  mar=c(0,0,1,0))
 
-n = c("win_loss_pct","age", "off_rtg","def_rtg","fg","fg2","fg3","ft","orb","drb", "ast", "stl", "blk", "tov", "pf")
+df00s <- df %>% filter(decade == "00s")
+cor00 <- cor(df00s[, vars], method = "spearman")
+cor00plot <- corrplot(cor00, method = "color", col = col(200), addCoef.col = 'black', type = "upper", tl.srt = 45, tl.col = "black", tl.cex = 0.7, cl.pos = 'n', diag = F, number.font = 1, number.cex = 0.6, title = "00s",  mar=c(0,0,1,0))
 
-data <- nba_data %>% filter(decade == "80s")
-factors = data %>% select(all_of(n))
-res <- cor(factors)
-p80s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
-   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
+df10s <- df %>% filter(decade == "10s")
+cor10 <- cor(df10s[, vars], method = "spearman")
+cor10plot <- corrplot(cor10, method = "color", col = col(200), addCoef.col = 'black', type = "upper", tl.srt = 45, tl.col = "black", tl.cex = 0.7, cl.pos = 'n', diag = F, number.font = 1, number.cex = 0.6, title = "00s",  mar=c(0,0,1,0))
 
-data <- nba_data %>% filter(decade == "90s")
-factors = data %>% select(all_of(n))
-res <- cor(factors)
-p90s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
-   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
-
-data <- nba_data %>% filter(decade == "00s")
-factors = data %>% select(all_of(n))
-res <- cor(factors)
-p00s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
-   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
-
-data <- nba_data %>% filter(decade == "10s")
-factors = data %>% select(all_of(n))
-res <- cor(factors)
-p10s <- corrplot(res,method="color",tl.col="black", tl.srt=30, order = "original", 
-   number.cex=0.75,sig.level = 0.01, addCoef.col = "black")
-
-View(df)
+# Posem el títol:
+title(main = "Correlació entre algunes de les principals mètriques segons la dècada", cex.main = 1.2,   font.main = 2, col.main= "black", 
+      outer = TRUE)
 
 ```
+
+
+
+
+
+
+
 
 Per tant, explicarem quines correlacions trobem en cada època i així doncs, entendre quin estil de joc predominava en cada època.
 
@@ -568,7 +466,7 @@ En l'època dels 00, comencem a observar una evolució de l'estil de joc. Si par
 
 Finalment, en l'època dels 10, seguim observant l'evolució de l'estil de joc. Per aconseguir victòries, trobem les mateixes correlacions. En aquest cas, quan parlem de tirs de camp, trobem una forta correlació amb els tirs de tres punts, deixant de banda els de dos punts. A més, les assistències també es veuen orientades cap a aquesta distància. És a dir, els equips donen una major importància al tir de tres com a tret característic de l'estil de joc i presenten un major joc associatiu dirigit a aquesta distància. Per tant, podem dir que l'estil de joc de l'NBA, ha evolucionat a partir d'un joc ofensiu que es basava en tirs de dos punts, cap a un estil de joc més tàctic (pèrdues de pilota i faltes) que es basa en els tirs de tres punts.
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 
 data <- wnba_data %>% filter(decade == "90s")
 factors = data %>% select(all_of(n))
@@ -595,6 +493,40 @@ Durant l'època dels 90, trobem com a variables importants per aconseguir un mil
 En l'època dels 00, veiem una petita evolució en l'estil de joc. Per assolir millors resultats, trobem la classificació ofensiva i les assistències. És a dir, el joc associatiu, en aquesta època presenta un millor rendiment. Si observem els tirs de camp, veiem una distribució entre els tirs de dos i tres punts. A més, les assistències també es distribueixen en aquests dos atributs. Finalment, tornem a observar com en l'NBA, com s'incorpora la importància dels rebots ofensius en els tirs de dos punts i cometre faltes tàctiques en pèrdua de pilotes. Per tant, hem analitzat l'evolució cap a un joc amb més recursos ofensius, tirs de dos i tres punts i un joc associatiu que presenta una gran importància a l'hora d'obtenir victòries.
 
 Finalment, a l'època dels 10, trobem com torna a evolucionar la capacitat ofensiva. En aquest cas, els tirs de dos punts tornen a ser importants per aconseguir un millor percentatge de victòries. Tornen a predominar els tirs de dos punts en els tirs de camp, en canvi, les assistències es veuen distribuïdes entre les dues distàncies. Per part dels rebots ofensius ja no presenten gaire importància. Així doncs, hem analitzat una altra evolució de l'estil de joc, on tornen a predominar els tirs de dos punts que tornen a ser claus per a obtenir victòries.
+
+
+## Anàlisi 3: És possible predir si un equip arribarà o no a playoffs en funció de les seves estadístiques?
+Una altra cosa que ens preguntem és quins són els factors que més influeixen en el joc de manera històrica. És a dir, quines variables tenen més pes quan, a final de temporada, mirem les victòries i derrotes d'un equip.
+
+### Anàlisi 3.1: Selecció de les dades que es volen analitzar/comparar
+Com disposem d'un gran nombre de variables, farem una correlació amb una selecció d'elles. Com hem comentat abans, no seria raonable utilitzar el valor absolut de victòries, ja que aquest pot variar en funció del nombre de partits totals que es juguen; per tant, utilitzarem el percentatge de victòries (variable _win_loss_pct_). A continuació, detallem quines variables seleccionarem per l'estudi:
+
+```{r}
+# Seleccionem les variables:
+vars <- c("age", "fg_pct", "fga", "fg3_pct", "fg3a", "ft_pct", "orb", "drb", "ast", "stl", "tov", "off_rtg", "def_rtg")
+description <- c("és l'edat mitjana de l'equip un factor influent?",
+                 "percentatge de llançaments de camps encertats",
+                 "total de llançaments intentats per partit",
+                 "percentatge de llançaments de 3 encertats",
+                 "total de llançaments de 3 intentats per partit",
+                 "percentatge de tirs lliures encertats",
+                 "rebots ofensius per partit",
+                 "rebots defensius per partit",
+                 "assistències per partit",
+                 "pilotes robades per partit",
+                 "pilotes perdudes per partit",
+                 "rating ofensiu de l'equip",
+                 "rating defensiu de l'equip")
+
+# Fem la taula:
+vars21 <- data.frame(variables = vars, desc = description)
+kable(vars21, booktabs = TRUE, caption = "Variables seleccionades pel model lineal", 
+      col.names = c("Variable", "Descripció de la variable")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+Així, hem fet una selecció d'estadístiques clàssiques de la NBA per a veure quines d'elles influeixen en el percentatge de victòries a final de temporada. Abans de tot, però, haurem de transformar algunes variables. 
 
 # Exercici 5: Representació dels resultats.
 
