@@ -314,39 +314,6 @@ kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "Diferències entre dècade
 
 Així, veiem que hi ha diferències significatives entre tots els grups. No obstant, veiem que les diferències entre els 90s i els 2000s i entre els 2000s i els 2010s són menors que entre les altres dècades, un fet que podíem intuir amb la representació gràfica d'aquesta variable.
 
-## Anàlisi 2: Estudi sobre les estadístiques bàsiques i generals sobre el joc durant les diferents èpoques
-Una altra cosa que ens preguntem és quins són els factors que més influeixen en el joc de manera històrica. És a dir, quines variables tenen més pes quan, a final de temporada, mirem les victòries i derrotes d'un equip.
-
-### Anàlisi 2.1: Selecció de les dades que es volen analitzar/comparar
-Com disposem d'un gran nombre de variables, farem una correlació amb una selecció d'elles. Com hem comentat abans, no seria raonable utilitzar el valor absolut de victòries, ja que aquest pot variar en funció del nombre de partits totals que es juguen; per tant, utilitzarem el percentatge de victòries (variable _win_loss_pct_). A continuació, detallem quines variables seleccionarem per l'estudi:
-
-```{r}
-# Seleccionem les variables:
-vars <- c("age", "fg_pct", "fga", "fg3_pct", "fg3a", "ft_pct", "orb", "drb", "ast", "stl", "tov", "off_rtg", "def_rtg")
-description <- c("és l'edat mitjana de l'equip un factor influent?",
-                 "percentatge de llançaments de camps encertats",
-                 "total de llançaments intentats per partit",
-                 "percentatge de llançaments de 3 encertats",
-                 "total de llançaments de 3 intentats per partit",
-                 "percentatge de tirs lliures encertats",
-                 "rebots ofensius per partit",
-                 "rebots defensius per partit",
-                 "assistències per partit",
-                 "pilotes robades per partit",
-                 "pilotes perdudes per partit",
-                 "rating ofensiu de l'equip",
-                 "rating defensiu de l'equip")
-
-# Fem la taula:
-vars21 <- data.frame(variables = vars, desc = description)
-kable(vars21, booktabs = TRUE, caption = "Variables seleccionades pel model lineal", 
-      col.names = c("Variable", "Descripció de la variable")) %>% 
-  kable_styling(latex_options = c("striped", "hold_position"))
-```
-
-
-Així, hem fet una selecció d'estadístiques clàssiques de la NBA per a veure quines d'elles influeixen en el percentatge de victòries a final de temporada. Abans de tot, però, haurem de transformar algunes variables. 
-
 ## Anàlisi 2: ha canviat l'estil de joc durant els anys?
 Dins de l'NBA, cadascun dels equips que han competit o encara competeixen han desenvolupat un estil de joc característic a partir d'aprofundir i millorar en certes capacitats ofensives/defensives que els ha permès aconseguir victòries i obtenir el rendiment desitjat. A més, cada època en concret té les seves peculiaritats pròpies, ja sigui per les regles del moment, pels equips dominadors o per grans estrelles que obliguen als equips a evolucionar per adaptar-se. 
 
@@ -465,10 +432,10 @@ Destaquem algunes coses d'aquestes correlacions:
 
 
 ## Anàlisi 3: És possible predir si un equip arribarà o no a playoffs en funció de les seves estadístiques?
-Una altra cosa que ens preguntem és quins són els factors que més influeixen en el joc de manera històrica. És a dir, quines variables tenen més pes quan, a final de temporada, mirem les victòries i derrotes d'un equip.
+En aquest últim estudi, mirarem de realitzar un predictor a partir d'un model supervisat per tal de predir si un equip es pot classificar a playoffs segons les estadístiques recollides durant la temporada. Per aquest cas, tornarem a dividir el conjunt de dades per èpoques, per continuar entenent l'evolució històrica de l'NBA i la WNBA.
 
 ### Anàlisi 3.1: Selecció de les dades que es volen analitzar/comparar
-Com disposem d'un gran nombre de variables, farem una correlació amb una selecció d'elles. Com hem comentat abans, no seria raonable utilitzar el valor absolut de victòries, ja que aquest pot variar en funció del nombre de partits totals que es juguen; per tant, utilitzarem el percentatge de victòries (variable _win_loss_pct_). A continuació, detallem quines variables seleccionarem per l'estudi:
+Per a seleccionar les variables a utilitzar, mirarem d'afegir el % d'encerts per les estadístiques de tirs de camp. Aquesta ens permet entendre de millor el rendiment de l'equip sobre aquesta estadística. Així i tot, continuarem usant certes variables d'anteriors anàlisis.
 
 ```{r}
 # Seleccionem les variables:
@@ -494,8 +461,117 @@ kable(vars21, booktabs = TRUE, caption = "Variables seleccionades pel model line
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
+### Anàlisi 3.2: Preparació dels subconjunts de dades d'entrenament i prova.
+Seguidament, haurem de crear els diferents subconjunts de dades per tal d'entrenar el nostre model i posteriorment avaluar-lo. Per realitzar la partició, ens basarem en el mètode d'exclusió (holdout) que ens permet dividir aleatòriament les dades en dos conjunts independents. El que farem serà utilitzar dos terços pel conjunt d'entrenament i el terç restant per les dades de prova.
 
-Així, hem fet una selecció d'estadístiques clàssiques de la NBA per a veure quines d'elles influeixen en el percentatge de victòries a final de temporada. Abans de tot, però, haurem de transformar algunes variables. 
+```{r}
+# Convertim la variable Playoffs a factor
+df80s$Playoffs.f <- factor(df80s$Playoffs)
+df90s$Playoffs.f <- factor(df90s$Playoffs)
+df00s$Playoffs.f <- factor(df00s$Playoffs)
+df10s$Playoffs.f <- factor(df10s$Playoffs)
+
+# Seleccionem les variables a utilitzar
+df80s <- select(df80s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
+df90s <- select(df90s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
+df00s <- select(df00s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
+df10s <- select(df10s, Playoffs.f, age, fg_pct, fga, fg3_pct, fg3a, ft_pct, orb, drb, ast, stl, tov, off_rtg, def_rtg)
+
+if(!require("rminer")) install.packages("rminer"); library("rminer")
+
+set.seed(12345)
+
+# Dividim el conjunt en els dos subconjunts (entrenament i prova)
+h80s <- holdout(y=df80s$Playoffs.f, ratio=2/3, mode="stratified")
+train80s <- df80s[h80s$tr,]
+test80s <- df80s[h80s$ts,]
+
+h90s <- holdout(y=df90s$Playoffs.f, ratio=2/3, mode="stratified")
+train90s <- df90s[h90s$tr,]
+test90s <- df90s[h90s$ts,]
+
+h00s <- holdout(y=df00s$Playoffs.f, ratio=2/3, mode="stratified")
+train00s <- df00s[h00s$tr,]
+test00s <- df00s[h00s$ts,]
+
+h10s <- holdout(y=df10s$Playoffs.f, ratio=2/3, mode="stratified")
+train10s <- df10s[h10s$tr,]
+test10s <- df10s[h10s$ts,]
+
+dim(train80s)
+dim(test80s)
+```
+
+En aquest cas, podem observar les dimensions dels primers subconjunts que fan referència a l'època dels 80. Trobem per al subconjunt d'entrenament 154 files amb un total de 14 variables. Així doncs, per al subconjunt de prova, trobem 77 files i 14 variables.
+
+### Anàlisi 3.3: Creació del model i avaluació a partir de la utilització de la regressió logística.
+
+El mètode de model supervisat seleccionat es tracta del model de regressió logística. Aquest ens permetrà predir i classificar la variable categòrica _Playoffs_ per tal de determinar si un equip pot entrar a aquests segons les seves estadístiques. Primer de tot, crearem el model a partir del subconjunt d'entrenament i finalment, mirarem de realitzar la predicció amb el subconjunt de prova per tal d'avaluar-lo. Per avaluar, crearem una matriu de confusió per cada una de les èpoques.
+
+```{r}
+
+# Creem els diferents models de regressió logística
+d80s.model = glm(Playoffs.f ~., data = train80s, family = binomial)
+#summary(d80s.model)
+
+d90s.model = glm(Playoffs.f ~., data = train90s, family = binomial)
+#summary(d90s.model)
+
+d00s.model = glm(Playoffs.f ~., data = train00s, family = binomial)
+#summary(d00s.model)
+
+d10s.model = glm(Playoffs.f ~., data = train10s, family = binomial)
+#summary(d10s.model)
+
+# Creem la predició i la matriu de confusió sobre els resultats
+d80s.prob = predict(d80s.model, test80s, type="response")
+d80s.pred = rep("No", dim(train80s)[1])
+d80s.pred[d80s.prob > .5] = "Yes"
+mat80s <- table(d80s.pred, train80s$Playoffs.f)
+
+d90s.prob = predict(d90s.model, test90s, type="response")
+d90s.pred = rep("No", dim(train90s)[1])
+d90s.pred[d90s.prob > .5] = "Yes"
+mat90s <- table(d90s.pred, train90s$Playoffs.f)
+
+d00s.prob = predict(d00s.model, test00s, type="response")
+d00s.pred = rep("No", dim(train00s)[1])
+d00s.pred[d00s.prob > .5] = "Yes"
+mat00s <- table(d00s.pred, train00s$Playoffs.f)
+
+d10s.prob = predict(d10s.model, test10s, type="response")
+d10s.pred = rep("No", dim(train10s)[1])
+d10s.pred[d10s.prob > .5] = "Yes"
+mat10s <- table(d10s.pred, train10s$Playoffs.f)
+
+```
+
+Seguidament, calcularem el percentatge de registres correctament classificats per cada una de les èpoques.
+```{r}
+mat80s
+perc<-100 * sum(diag(mat80s)) / sum(mat80s)
+print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+```
+
+```{r}
+mat90s
+perc<-100 * sum(diag(mat90s)) / sum(mat90s)
+print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+```
+
+```{r}
+mat00s
+perc<-100 * sum(diag(mat00s)) / sum(mat00s)
+print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+```
+
+```{r}
+mat10s
+perc<-100 * sum(diag(mat10s)) / sum(mat10s)
+print(sprintf("El %% de registres correctament classificats és: %.4f %%",perc))
+```
+
+Podem observar com els models que hem generat ens ofereixen una qualitat bastant baixa. Tots aquests ens diuen que només tenen una precisió del 50%. 
 
 # Exercici 5: Representació dels resultats.
 
