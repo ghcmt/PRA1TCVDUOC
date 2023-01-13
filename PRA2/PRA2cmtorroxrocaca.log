@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.4)  12 JAN 2023 23:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.4)  13 JAN 2023 18:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -444,6 +444,9 @@ File: l3backend-pdftex.def 2022-10-26 L3 backend support: PDF output (pdfTeX)
 
 LaTeX Warning: Label `tab:unnamed-chunk-20' multiply defined.
 
+
+LaTeX Warning: Label `tab:unnamed-chunk-32' multiply defined.
+
 )
 \openout1 = `PRA2cmtorroxrocaca.aux'.
 
@@ -565,31 +568,23 @@ File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [2] [3]
-<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf, id=100, 578.16pt x 216.81pt>
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf, id=102, 578.16pt x 216.81pt>
 File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
 <use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf>
-Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf  used on input line 310.
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf  used on input line 292.
 (pdftex.def)             Requested size: 469.75385pt x 176.15768pt.
-[4]
-<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf, id=107, 578.16pt x 289.08pt>
+[4 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf>]
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf, id=119, 578.16pt x 289.08pt>
 File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
 <use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf>
-Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 356.
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 338.
 (pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
-[5 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-9-1.pdf>]
-<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf, id=124, 578.16pt x 289.08pt>
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf, id=120, 578.16pt x 289.08pt>
 File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
 <use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf>
-Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 362.
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 344.
 (pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
-[6 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf> <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf>]
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[7]
+[5 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-11-1.pdf> <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-12-1.pdf>]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -599,18 +594,54 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[8]
-<PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf, id=166, 578.16pt x 578.16pt>
+[6]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[7] [8]
+<PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf, id=169, 578.16pt x 578.16pt>
 File: PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf Graphic file (type pdf)
 <use PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf>
-Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf  used on input line 632.
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf  used on input line 614.
 (pdftex.def)             Requested size: 516.75746pt x 516.75746pt.
 
-Overfull \hbox (47.00244pt too wide) in paragraph at lines 632--632
+Overfull \hbox (47.00244pt too wide) in paragraph at lines 614--614
  [] 
  []
 
-[9] [10 <./PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf>] [11] [12] [13] [14] [15] (./PRA2cmtorroxrocaca.aux)
+[9 <./PRA2cmtorroxrocaca_files/figure-latex/Correlació de Spearman-1.pdf>] [10] [11]
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-25-1.pdf, id=197, 361.35pt x 216.81pt>
+File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-25-1.pdf Graphic file (type pdf)
+<use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-25-1.pdf>
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-25-1.pdf  used on input line 842.
+(pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
+[12 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-25-1.pdf>]
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-27-1.pdf, id=211, 361.35pt x 216.81pt>
+File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-27-1.pdf Graphic file (type pdf)
+<use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-27-1.pdf>
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-27-1.pdf  used on input line 875.
+(pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-29-1.pdf, id=212, 361.35pt x 216.81pt>
+File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-29-1.pdf Graphic file (type pdf)
+<use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-29-1.pdf>
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-29-1.pdf  used on input line 908.
+(pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
+[13 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-27-1.pdf>]
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-31-1.pdf, id=226, 361.35pt x 216.81pt>
+File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-31-1.pdf Graphic file (type pdf)
+<use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-31-1.pdf>
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-31-1.pdf  used on input line 941.
+(pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
+[14 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-29-1.pdf>]
+<PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf, id=239, 361.35pt x 216.81pt>
+File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf Graphic file (type pdf)
+<use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf>
+Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf  used on input line 974.
+(pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
+[15 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-31-1.pdf>] [16 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf>] (./PRA2cmtorroxrocaca.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -618,18 +649,18 @@ Package rerunfilecheck Info: File `PRA2cmtorroxrocaca.out' has not changed.
 (rerunfilecheck)             Checksum: 307AFF43EED25912BF00974042721B47;3710.
  ) 
 Here is how much of TeX's memory you used:
- 12451 strings out of 478053
- 202337 string characters out of 5838817
- 1877787 words of memory out of 5000000
- 32248 multiletter control sequences out of 15000+600000
+ 12502 strings out of 478053
+ 205216 string characters out of 5838817
+ 1865787 words of memory out of 5000000
+ 32290 multiletter control sequences out of 15000+600000
  565623 words of font info for 75 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,10n,77p,699b,584s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,10n,77p,699b,582s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}<c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on PRA2cmtorroxrocaca.pdf (15 pages, 308535 bytes).
+Output written on PRA2cmtorroxrocaca.pdf (16 pages, 326977 bytes).
 PDF statistics:
- 284 PDF objects out of 1000 (max. 8388607)
- 241 compressed objects within 3 object streams
- 82 named destinations out of 1000 (max. 500000)
- 125 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 322 PDF objects out of 1000 (max. 8388607)
+ 268 compressed objects within 3 object streams
+ 86 named destinations out of 1000 (max. 500000)
+ 150 words of extra memory for PDF output out of 10000 (max. 10000000)
 

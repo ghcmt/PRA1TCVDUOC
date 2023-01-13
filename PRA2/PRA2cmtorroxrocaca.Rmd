@@ -29,6 +29,7 @@ library(ggpubr)
 library(corrplot)
 library(rminer)
 library(caret)
+library(pROC)
 ```
 
 
@@ -123,10 +124,21 @@ Com bé hem comentat en l'anterior apartat, trobem temporades en les quals ens f
 
 ## 3.1: Les dades contenen zeros o elements buits?
 
-Així i tot, trobem temporades més antigues a l'aparició del tir de tres punts que si disposen d'aquestes estadístiques. Observant el conjunt de dades, trobem que a partir de la temporada 1973-74 disposem de tota la informació necessària. Així i tot, analitzarem quins valors buits disposem en el nostre conjunt de dades a partir d'aquesta temporada.
+Així i tot, trobem temporades més antigues a l'aparició del tir de tres punts que si disposen d'aquestes estadístiques. Observant el conjunt de dades, trobem que a partir de la temporada 1973-74 disposem de tota la informació necessària. Tot i això, analitzarem quins valors buits disposem en el nostre conjunt de dades a partir d'aquesta temporada.
+
 ```{r}
 df3 <- df %>% filter(Season > "1973-74")
-sort(colSums(is.na(df3)), decreasing = TRUE)
+
+# Obtenim valors de NAs per columnes:
+dfnas <- df3 %>%
+  select(everything()) %>%
+  summarise_all(funs(sum(is.na(.))))
+
+# Ens quedem amb les columnes que tenen més d'un NA:
+dfnas <- dfnas[sapply(dfnas, function(x) any(x > 0))]
+kable(dfnas, booktabs = TRUE, 
+      caption = "Columnes amb valors NAs filtrant a partir de la temporada 1973-74") %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
 Com era d'esperar, les úniques variables que observem amb valors buits són les que fan referència als tirs de tres punts. El que farem, és omplir aquests valors buits amb el valor 0, ja que s'ha decidit que és el valor que realment representa aquests camps. Com no existia el tir de tres no es van realitzar cap tir.
@@ -440,11 +452,6 @@ En aquest últim estudi, mirarem de realitzar un predictor a partir d'un model s
 Per a seleccionar les variables a utilitzar, mirarem d'afegir el % d'encerts per les estadístiques de tirs de camp. Aquesta ens permet entendre de millor el rendiment de l'equip sobre aquesta estadística. Així i tot, continuarem usant certes variables d'anteriors anàlisis i n'afegirem algunes de noves.
 
 ```{r}
-view(df)
-```
-
-
-```{r}
 # Seleccionem les variables:
 vars <- c("age", "fg_pct", "fga", "fg3_pct", "fg3a", "ft_pct", "orb", "drb", "ast", "stl", "tov", "off_rtg", "def_rtg", "pace", "ts_pct", "efg_pct", "opp_efg_pct", "sos")
 description <- c("edat mitjana",
@@ -542,31 +549,36 @@ d10s.model = glm(Playoffs.f ~., data = train10s, family = binomial)
 
 # Creem la predicció i la matriu de confusió sobre els resultats
 d80s.prob = predict(d80s.model, test80s, type="response")
-d80s.pred = rep("No", dim(train80s)[1])
-d80s.pred[d80s.prob > .5] = "Yes"
-mat80s <- table(d80s.pred, train80s$Playoffs.f)
 
+# Establim que si la probabilitat per l'equip és superior a 0.5, ens predigui Playoffs:
+prob80s <- ifelse(d80s.prob > 0.5, "Yes", "No")
+
+# Creem la matriu de confusió:
+mat80s <- table(prob80s, test80s$Playoffs.f)
+
+# Fem el mateix amb les altres dècades. Comencem pels 90:
 d90s.prob = predict(d90s.model, test90s, type="response")
-d90s.pred = rep("No", dim(train90s)[1])
-d90s.pred[d90s.prob > .5] = "Yes"
-mat90s <- table(d90s.pred, train90s$Playoffs.f)
+prob90s <- ifelse(d90s.prob > 0.5, "Yes", "No")
+mat90s <- table(prob90s, test90s$Playoffs.f)
 
+# Anys 2000:
 d00s.prob = predict(d00s.model, test00s, type="response")
-d00s.pred = rep("No", dim(train00s)[1])
-d00s.pred[d00s.prob > .5] = "Yes"
-mat00s <- table(d00s.pred, train00s$Playoffs.f)
+prob00s <- ifelse(d00s.prob > 0.5, "Yes", "No")
+mat00s <- table(prob00s, test00s$Playoffs.f)
 
+# Anys 2010 fins l'actualitat:
 d10s.prob = predict(d10s.model, test10s, type="response")
-d10s.pred = rep("No", dim(train10s)[1])
-d10s.pred[d10s.prob > .5] = "Yes"
-mat10s <- table(d10s.pred, train10s$Playoffs.f)
+prob10s <- ifelse(d10s.prob > 0.5, "Yes", "No")
+mat10s <- table(prob10s, test10s$Playoffs.f)
+
 
 ```
 
-Seguidament, calcularem el percentatge de registres correctament classificats per cada una de les èpoques.
+A continuació, presentem el resum de cada model, amb la seva matriu de confusió, les seves mesures de qualitat (sensitivitat, especificitat i precisió) i la corba ROC associada. 
+
+Comencem analitzant els anys 80:
 
 ```{r}
-mat80s
 kable(mat80s, booktabs = TRUE, 
       caption = "Matriu de confusió amb el model pels anys 80", 
       col.names = c("No", "Yes")) %>% 
@@ -576,7 +588,7 @@ spec <- round(specificity(mat80s), 3) * 100
 prec <- round(precision(mat80s), 3) * 100
 ```
 
-```{r}
+```{r fig.height=3, fig.width=5, fig.align='center'}
 params <- c("Sensitivitat", "Especificitat", "Precisió")
 desc <- c("Proporció de registres positius correctament identificats",
                  "Proporció de registres negatius correctament identificats",
@@ -588,11 +600,19 @@ kable(modSum, booktabs = TRUE,
       caption = "Mesures de la qualitat del model per la dècada dels 80", 
       col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
+
+# Canviem els valors de "Sí" i "No" per numèrics:
+prob80s <- ifelse(d80s.prob > 0.5, 1, 0)
+
+# Fem la corba:
+roc80s <- roc(test80s$Playoffs.f, prob80s)
+plot.roc(roc80s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
+
 ```
 
+Passem a l'època dels 90. 
 
 ```{r}
-mat90s
 kable(mat90s, booktabs = TRUE, 
       caption = "Matriu de confusió amb el model pels anys 90", 
       col.names = c("No", "Yes")) %>% 
@@ -600,18 +620,28 @@ kable(mat90s, booktabs = TRUE,
 sens <- round(sensitivity(mat90s), 3) * 100
 spec <- round(specificity(mat90s), 3) * 100
 prec <- round(precision(mat90s), 3) * 100
+
+# Actualitzem paràmetres:
+values <- c(sens, spec, prec)
+modSum <- data.frame(pars = params, description = desc, val = values)
 ```
 
-```{r}
+```{r fig.height=3, fig.width=5, fig.align='center'}
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per la dècada dels 90", 
       col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
+
+# Corba ROC:
+prob90s <- ifelse(d90s.prob > 0.5, 1, 0)
+roc90s <- roc(test90s$Playoffs.f, prob90s)
+plot.roc(roc90s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
+
 ```
 
+És el torn dels anys 2000:
 
 ```{r}
-mat00s
 kable(mat00s, booktabs = TRUE, 
       caption = "Matriu de confusió amb el model pels anys 2000", 
       col.names = c("No", "Yes")) %>% 
@@ -619,18 +649,27 @@ kable(mat00s, booktabs = TRUE,
 sens <- round(sensitivity(mat00s), 3) * 100
 spec <- round(specificity(mat00s), 3) * 100
 prec <- round(precision(mat00s), 3) * 100
+
+# Actualitzem paràmetres:
+values <- c(sens, spec, prec)
+modSum <- data.frame(pars = params, description = desc, val = values)
 ```
 
-```{r}
+```{r fig.height=3, fig.width=5, fig.align='center'}
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per la dècada dels 2000", 
       col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
+
+# Corba ROC:
+prob00s <- ifelse(d00s.prob > 0.5, 1, 0)
+roc00s <- roc(test00s$Playoffs.f, prob00s)
+plot.roc(roc00s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
 ```
 
+Finalment, analitzem el model de la dècada del 2010 fins l'actualitat:
 
 ```{r}
-mat10s
 kable(mat10s, booktabs = TRUE, 
       caption = "Matriu de confusió amb el model pels anys 2010 fins ara", 
       col.names = c("No", "Yes")) %>% 
@@ -638,32 +677,86 @@ kable(mat10s, booktabs = TRUE,
 sens <- round(sensitivity(mat10s), 3) * 100
 spec <- round(specificity(mat10s), 3) * 100
 prec <- round(precision(mat10s), 3) * 100
+
+# Actualitzem paràmetres:
+values <- c(sens, spec, prec)
+modSum <- data.frame(pars = params, description = desc, val = values)
 ```
 
-```{r}
+```{r fig.height=3, fig.width=5, fig.align='center'}
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per la dècada dels 2010 fins l'actualitat", 
       col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
+
+# Corba ROC:
+prob10s <- ifelse(d10s.prob > 0.5, 1, 0)
+roc10s <- roc(test10s$Playoffs.f, prob10s)
+plot.roc(roc10s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
 ```
 
+Per últim, realitzarem un model per a totes les èpoques analitzades.
 
-Pel que fa als paràmetres dels nostres models, tenim la següent taula:
+```{r fig.height=3, fig.width=5, fig.align='center'}
+# Fixem el seed:
+set.seed(12345)
 
-```{r}
-params <- c("Sensitivitat", "Especificitat", "Precisió")
-desc <- c("Proporció de registres positius correctament identificats",
-                 "Proporció de registres negatius correctament identificats",
-                 "Proporció de registres classificats com a positius que ho són")
+# Creem el dataframe:
+allDF <- df %>% filter(decade != "Pre-three era")
+allDF$Playoffs.f <- as.factor(allDF$Playoffs)
+allDF <- allDF %>% select(Playoffs.f, vars)
+
+# Fem partició entre entrenament i test:
+hAll <- holdout(y=allDF$Playoffs.f, ratio=2/3, mode="stratified")
+trainAll <- allDF[hAll$tr,]
+testAll <- allDF[hAll$ts,]
+
+# Creem el model i la matriu de confusió:
+dAll.model = glm(Playoffs.f ~., data = trainAll, family = binomial)
+
+# Creem la predicció i la matriu de confusió sobre els resultats
+dAll.prob = predict(dAll.model, testAll, type="response")
+
+# Establim que si la probabilitat per l'equip és superior a 0.5, ens predigui Playoffs:
+probAll <- ifelse(dAll.prob > 0.5, "Yes", "No")
+
+# Creem la matriu de confusió:
+matAll <- table(probAll, testAll$Playoffs.f)
+
+# Analitzem el model:
+kable(matAll, booktabs = TRUE, 
+      caption = "Matriu de confusió amb el model per totes les èpoques (post creació tir de 3)", 
+      col.names = c("No", "Yes")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+sens <- round(sensitivity(matAll), 3) * 100
+spec <- round(specificity(matAll), 3) * 100
+prec <- round(precision(matAll), 3) * 100
 values <- c(sens, spec, prec)
 modSum <- data.frame(pars = params, description = desc, val = values)
 
+# Taula resum:
+kable(modSum, booktabs = TRUE, 
+      caption = "Mesures de la qualitat del model per totes les èpoques (post creació tir de 3)", 
+      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+# Corba ROC:
+probAll <- ifelse(dAll.prob > 0.5, 1, 0)
+
+# Fem la corba:
+rocAll <- roc(testAll$Playoffs.f, probAll)
+plot.roc(rocAll, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
+
+
 ```
 
 
-Podem observar com els models que hem generat ens ofereixen una qualitat bastant baixa. Tots aquests ens diuen que només tenen una precisió del 50%. 
 
-corba ROC
+
+COMENTARIS MODELS!
+
+
+
 
 # Exercici 5: Representació dels resultats.
 
