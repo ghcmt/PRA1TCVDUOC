@@ -788,6 +788,9 @@ Com podem veure al model, tenim cinc predictors amb significació estadística, 
 
 Destaquem també la variable _ft_pct_, és a dir, el percentatge de tirs lliures encertats. Amb un valor de _estimate_ molt positiu, es queda prop de tenir un p-valor significatiu (0.078). Això dóna rellevància a l'encert d'aquest tipus de llançaments, que de vegades semblen valorar-se menys que els llançaments de dos o els triples. Per finalitzar, també parlarem de les mètriques avançades _ts_pct_ (o _True Shooting Percentage_, una mètrica d'eficiència en el tir que té en compte l'encert en tot el tipus de llançaments, amb fórmula _FGA + 0.44 * FTA_) i _efg_pct_ (tirs de camp efectius, on es dóna més valor al llançament de tres i que té com a fórmula (FG + 0.5 * 3P) / FGA). Són dues mètriques amb valors _estimate_ molt positius, el que clarament posa de manifest la seva importància, però amb p-valor molt per sobre de 0.5, el que ens diu que no són bons predictors segons el nostre model. 
 
+# Exercici 5: Representació dels resultats
+La representació gràfica dels resultats per a cada anàlisi es pot trobar al llarg de l'exercici 4. 
+
 # Exercici 6: Resolució del problema.
 
 El conjunt de dades que presentem es basa en desenes de mètriques estadístiques sobre les temporades de l'NBA i de la WNBA. Aquestes es van recollir durant la primera pràctica a partir de l'ús de tècniques de _web scrapping_. Aquest conjunt presenta 1900 observacions i 53 variables. En aquest, podem trobar des d'estadístiques bàsiques fins a altres més complexes sobre el joc d'un equip durant la temporada regular.
@@ -803,7 +806,31 @@ L'última anàlisi es basava en la creació d'un model que fos capaç de predir 
 Finalment, podem dir que el conjunt de dades presentat ens permet assolir els objectius plantejats a l'inici d'aquesta pràctica. Tot i que és cert que no disposem de tota la informació sobre les temporades inicials, aquest estudi ens permet entendre com han evolucionat les diferents lligues segons les dècades a través de les estadístiques recollides. Hem pogut destacar diferents patrons en els estils de joc i la direcció que presenta l'estil de joc actual. És a dir, els equips estan deixant de banda els tirs de dos pels tirs de tres punts. Amb aquests s'obtenen una major puntuació, però presenten una major dificultat. Així i tot, podríem assumir que els equips estan optant per jugadors més tècnics i tiradors, en lloc d'optar per un joc físic per jugar a prop de la cistella.
 
 # Exercici 7: Codi.
-El codi de la pràctica es troba en l'arxiu R Markdown 'PRA2cmtorroxrocaca.Rmd' pujat al GitHub. No el reproduïm aquí per falta d'espai. Cal tenir en compte, que s'ha realitzat la pràctica sobre el mateix repositori. En conseqüència, trobarem que aquest s'anomena PRA1 però conte tant els fitxers de la primera pràctica en una carpeta per separat i els fitxers de la segona més visibles.
+El codi de la pràctica es troba en l'arxiu R Markdown 'PRA2cmtorroxrocaca.Rmd' pujat a la carpeta `source` del nostre GitHub: https://github.com/ghcmt/PRA1TCVDUOC. No el reproduïm aquí per falta d'espai. Cal tenir en compte, que s'ha realitzat la pràctica sobre el mateix repositori. En conseqüència, trobarem que aquest s'anomena PRA1 però conte tant els fitxers de la primera pràctica en una carpeta per separat i els fitxers de la segona més visibles.
 
 # Exercici 8: Vídeo.
-L'enllaç al vídeo es troba a FFFFFFFFFFF
+L'enllaç al vídeo es troba aquí: https://drive.google.com/file/d/1nIOK3WWEip6KktFsJo3WuuQ3iUHBh-sv/view?usp=share_link . 
+
+# Taula de contribucions
+```{r}
+contribs <- c("Investigació prèvia", "Redacció de les respostes", "Desenvolupament del codi", "Participació al vídeo")
+parts <- rep(c("Carlos Martínez Torró, Xavier Roca Canals"), 4)
+
+contDF <- data.frame(conts = contribs, partic = parts)
+
+kable(contDF, booktabs = TRUE, caption = "Taula de Contribucions", 
+      col.names = c("Contribucions", "Signatura")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+# Generació de CSV amb les dades utilitzades
+El fitxer CSV amb les dades utilitzades s'anomena NBA_WNBA_PRA2.csv i es troba a la carpeta _dataset_ del nostre Github. 
+
+```{r}
+# Agafem les variables:
+dfCSV <- df %>% select(Playoffs, win_loss_pct, fg, fg2, fg3, ft, pf, vars)
+
+# Ho guardem en un dataset:
+write.csv(dfCSV, "../dataset/NBA_WNBA_PRA2.csv")
+```
+
