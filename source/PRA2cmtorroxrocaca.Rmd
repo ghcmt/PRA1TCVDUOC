@@ -330,7 +330,7 @@ kable(ghDF[, c(2, 3, 7)], booktabs = TRUE, caption = "Diferències entre dècade
 Així, veiem que hi ha diferències significatives entre tots els grups. No obstant, veiem que les diferències entre els 90s i els 2000s i entre els 2000s i els 2010s són menors que entre les altres dècades, un fet que podíem intuir amb la representació gràfica d'aquesta variable.
 
 ## Anàlisi 2: ha canviat l'estil de joc durant els anys?
-Dins de l'NBA, cadascun dels equips que han competit o encara competeixen han desenvolupat un estil de joc característic a partir d'aprofundir i millorar en certes capacitats ofensives/defensives que els ha permès aconseguir victòries i obtenir el rendiment desitjat. A més, cada època en concret té les seves peculiaritats pròpies, ja sigui per les regles del moment, pels equips dominadors o per grans estrelles que obliguen als equips a evolucionar per adaptar-se. 
+Dins de l'NBA i WNBA, cadascun dels equips que han competit o encara competeixen han desenvolupat un estil de joc característic a partir d'aprofundir i millorar en certes capacitats ofensives/defensives que els ha permès aconseguir victòries i obtenir el rendiment desitjat. A més, cada època en concret té les seves peculiaritats pròpies, ja sigui per les regles del moment, pels equips dominadors o per grans estrelles que obliguen als equips a evolucionar per adaptar-se. 
 
 ### Anàlisi 2.1: Selecció de les dades que es volen analitzar/comparar
 Com disposem d'un gran nombre de variables, ens hem preguntat si podríem veure, amb l'ajuda d'aquestes, si ha canviat la forma de jugar en les últimes dècades de la lliga. Amb aquesta idea al cap, volem saber si la correlació entre algunes de les variables més importants ha anat canviant amb els anys o si, pel contrari, s'ha mantingut constant. A més, també ens preguntem quina és la correlació entre aquestes variables i les victòries aconseguides durant la temporada en funció de l'època, amb l'objectiu final de veure si quines variables es correlacionen més fortament amb les victòries. 
@@ -803,7 +803,7 @@ L'última anàlisi es basava en la creació d'un model que fos capaç de predir 
 Finalment, podem dir que el conjunt de dades presentat ens permet assolir els objectius plantejats a l'inici d'aquesta pràctica. Tot i que és cert que no disposem de tota la informació sobre les temporades inicials, aquest estudi ens permet entendre com han evolucionat les diferents lligues segons les dècades a través de les estadístiques recollides. Hem pogut destacar diferents patrons en els estils de joc i la direcció que presenta l'estil de joc actual. És a dir, els equips estan deixant de banda els tirs de dos pels tirs de tres punts. Amb aquests s'obtenen una major puntuació, però presenten una major dificultat. Així i tot, podríem assumir que els equips estan optant per jugadors més tècnics i tiradors, en lloc d'optar per un joc físic per jugar a prop de la cistella.
 
 # Exercici 7: Codi.
-El codi de la pràctica es troba en l'arxiu R Markdown `PRA2cmtorroxrocaca.Rmd` pujat al GitHub. No el reproduïm aquí per falta d'espai. 
+El codi de la pràctica es troba en l'arxiu R Markdown 'PRA2cmtorroxrocaca.Rmd' pujat al GitHub. No el reproduïm aquí per falta d'espai. Cal tenir en compte, que s'ha realitzat la pràctica sobre el mateix repositori. En conseqüència, trobarem que aquest s'anomena PRA1 però conte tant els fitxers de la primera pràctica en una carpeta per separat i els fitxers de la segona més visibles.
 
 # Exercici 8: Vídeo.
 L'enllaç al vídeo es troba a FFFFFFFFFFF
