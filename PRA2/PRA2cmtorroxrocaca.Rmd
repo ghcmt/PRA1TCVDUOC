@@ -30,6 +30,7 @@ library(corrplot)
 library(rminer)
 library(caret)
 library(pROC)
+library(broom)
 ```
 
 
@@ -570,8 +571,6 @@ mat00s <- table(prob00s, test00s$Playoffs.f)
 d10s.prob = predict(d10s.model, test10s, type="response")
 prob10s <- ifelse(d10s.prob > 0.5, "Yes", "No")
 mat10s <- table(prob10s, test10s$Playoffs.f)
-
-
 ```
 
 A continuació, presentem el resum de cada model, amb la seva matriu de confusió, les seves mesures de qualitat (sensitivitat, especificitat i precisió) i la corba ROC associada. 
@@ -598,7 +597,7 @@ modSum <- data.frame(pars = params, description = desc, val = values)
 
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per la dècada dels 80", 
-      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+      col.names = c("Mesura", "Descripció", "Valor al model (%)")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
 
 # Canviem els valors de "Sí" i "No" per numèrics:
@@ -609,6 +608,9 @@ roc80s <- roc(test80s$Playoffs.f, prob80s)
 plot.roc(roc80s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
 
 ```
+
+Podem comprovar, a través de totes les mètriques i també veient la corva ROC, que el nostre model funciona força bé per a predir si un equip arribaria o no a playoffs als anys 80. 
+
 
 Passem a l'època dels 90. 
 
@@ -629,7 +631,7 @@ modSum <- data.frame(pars = params, description = desc, val = values)
 ```{r fig.height=3, fig.width=5, fig.align='center'}
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per la dècada dels 90", 
-      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+      col.names = c("Mesura", "Descripció", "Valor al model (%)")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
 
 # Corba ROC:
@@ -638,6 +640,8 @@ roc90s <- roc(test90s$Playoffs.f, prob90s)
 plot.roc(roc90s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
 
 ```
+
+En el cas dels anys 90, el model funciona una mica pitjor que a la dècada anterior, però tot i així encara pot predir força bé la possibilitat d'arribar a playoffs. 
 
 És el torn dels anys 2000:
 
@@ -658,7 +662,7 @@ modSum <- data.frame(pars = params, description = desc, val = values)
 ```{r fig.height=3, fig.width=5, fig.align='center'}
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per la dècada dels 2000", 
-      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+      col.names = c("Mesura", "Descripció", "Valor al model (%)")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
 
 # Corba ROC:
@@ -666,6 +670,8 @@ prob00s <- ifelse(d00s.prob > 0.5, 1, 0)
 roc00s <- roc(test00s$Playoffs.f, prob00s)
 plot.roc(roc00s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
 ```
+
+Veiem una gran millora en el model per aquesta època, amb totes les mètriques per sobre del 90%, el que ens indica que és un model excel·lent per a predir l'arribada a playoffs. 
 
 Finalment, analitzem el model de la dècada del 2010 fins l'actualitat:
 
@@ -686,7 +692,7 @@ modSum <- data.frame(pars = params, description = desc, val = values)
 ```{r fig.height=3, fig.width=5, fig.align='center'}
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per la dècada dels 2010 fins l'actualitat", 
-      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+      col.names = c("Mesura", "Descripció", "Valor al model (%)")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
 
 # Corba ROC:
@@ -694,6 +700,8 @@ prob10s <- ifelse(d10s.prob > 0.5, 1, 0)
 roc10s <- roc(test10s$Playoffs.f, prob10s)
 plot.roc(roc10s, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos positius (%)", ylab = "Taxa de vertaders positius (%)", col = "#fcba03", print.auc = TRUE)
 ```
+
+Tenim un model molt similar al dels anys 2000, tot i que una mica inferior en la seva qualitat. Tot i així, aquí també hi ha més dades, així que una precisió de gairebé el 90% també ens permet afirmar que és un gran model per a predir l'arribada a playoffs. 
 
 Per últim, realitzarem un model per a totes les èpoques analitzades.
 
@@ -737,7 +745,7 @@ modSum <- data.frame(pars = params, description = desc, val = values)
 # Taula resum:
 kable(modSum, booktabs = TRUE, 
       caption = "Mesures de la qualitat del model per totes les èpoques (post creació tir de 3)", 
-      col.names = c("Mesura", "Descripció", "Valor al model")) %>% 
+      col.names = c("Mesura", "Descripció", "Valor al model (%)")) %>% 
   kable_styling(latex_options = c("striped", "hold_position"))
 
 # Corba ROC:
@@ -750,17 +758,39 @@ plot.roc(rocAll, legacy.axes = TRUE, percent = TRUE, xlab = "Taxa de falsos posi
 
 ```
 
+Notablement, el nostre model funciona de manera excel·lent per a totes les èpoques, amb mètriques molt properes (o superiors) al 90%. Analitzarem una mica més en detall aquest model. 
 
+```{r}
+# Guardem les dades en un dataframe:
+sumAll <- tidy(dAll.model)
 
+# Marquem allà on el p-valor sigui inferior a 0.05:
+#sumAll$p.value = cell_spec(sumAll$p.value, color = ifelse(sumAll$p.value > 20, "red", "black"))
 
-COMENTARIS MODELS!
+# Fem la taula:
+kable(sumAll, booktabs = TRUE, caption = "Resum del model per a totes les èpoques", 
+      col.names = c("Paràmetre", "Estimate", "Error estàndard", "Estadístic", "p-valor")) %>% 
+  column_spec(5, color = ifelse(sumAll$p.value < 0.05, "red", "black")) %>% 
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
 
+Com podem veure al model, tenim cinc predictors amb significació estadística, el que ens suggereix que hi ha relació entre aquestes variables i la possibilitat d'arribar a playoffs. Aquestes variables són:
 
+* **Edat**: sembla que hi ha una relació entre l'edat mitjana de l'equip i arribar a playoffs. Com té un valor de _estimate_ positiu, això ens indica que els equips més veterans tindrien més possibilitats d'arribar a playoffs que els més joves segons el nostre model. 
 
+* **Rebots ofensius**: com en el cas de l'edat, el valor positiu de _estimate_ indica que els equips amb més rebots ofensius per partit ho tindran millor per arribar a playoffs. 
+
+* **Pèrdues**: perdre molt la pilota disminuirà les possibilitats d'arribar a _playoffs_, tal com indica el valor negatiu de _estimate_. 
+
+* **Rating defensiu**: és el predictor amb el p-valor més baix, el que ens indica la seva forta relació amb arribar a playoffs. Veiem que té un valor _estimate_ negatiu, el que vol dir que els equips amb valors més alts d'aquesta variable tindran menys probabilitats d'arribar a playoffs, ja que un valor més petit d'aquesta variable indica una millor defensa. Notablement, el rating ofensiu sembla no tenir cap relació amb arribar a playoffs. Això ens suggereix que el nostre model premia una gran defensa abans que un gran atac. 
+
+* **Dificultat del calendari**: com era d'esperar, tenir rivals més complicats dificulta l'arribada a playoffs. Recordem que a la NBA els equips juguen més amb els de la seva divisió que amb els d'altres divisions. Si tens a la teva divisió rivals complicats, això complicarà els playoffs. El que ens indica el seu _estimate_ negatiu és que a major dificultat de calendari (és un percentatge calculat en funció de les victòries dels rivals), menys probabilitats d'arribar a playoffs. 
+
+Destaquem també la variable _ft_pct_, és a dir, el percentatge de tirs lliures encertats. Amb un valor de _estimate_ molt positiu, es queda prop de tenir un p-valor significatiu (0.078). Això dóna rellevància a l'encert d'aquest tipus de llançaments, que de vegades semblen valorar-se menys que els llançaments de dos o els triples. Per finalitzar, també parlarem de les mètriques avançades _ts_pct_ (o _True Shooting Percentage_, una mètrica d'eficiència en el tir que té en compte l'encert en tot el tipus de llançaments, amb fórmula _FGA + 0.44 * FTA_) i _efg_pct_ (tirs de camp efectius, on es dóna més valor al llançament de tres i que té com a fórmula (FG + 0.5 * 3P) / FGA). Són dues mètriques amb valors _estimate_ molt positius, el que clarament posa de manifest la seva importància, però amb p-valor molt per sobre de 0.5, el que ens diu que no són bons predictors segons el nostre model. 
 
 # Exercici 6: Resolució del problema.
 
-El conjunt de dades que presentem es basa en desenes de mètriques estadístiques sobre les temporades de l'NBA i de la WNBA. Aquestes es van recollir durant la primera pràctica a partir de l'ús de tècniques de web scrapping. Aquest conjunt presenta 1900 observacions i 53 variables. En aquest, podem trobar des d'estadístiques bàsiques fins a altres més complexes sobre el joc d'un equip durant la temporada regular.
+El conjunt de dades que presentem es basa en desenes de mètriques estadístiques sobre les temporades de l'NBA i de la WNBA. Aquestes es van recollir durant la primera pràctica a partir de l'ús de tècniques de _web scrapping_. Aquest conjunt presenta 1900 observacions i 53 variables. En aquest, podem trobar des d'estadístiques bàsiques fins a altres més complexes sobre el joc d'un equip durant la temporada regular.
 
 Un cop hem començat a analitzar el conjunt de dades, hem trobat que a partir de la temporada 1973-74 enrere no trobem els registres sobre estadístiques dels equips. Per tant, ens dificulta la seva anàlisi per falta d'informació. Així doncs, hem descartat aquestes temporades. Un altre fet a tenir en compte, és que els tirs de tres punts no s'inclou fins als anys 1979. Això no suposa un problema, ja que podem omplir els valors buits amb el valor 0, perquè es tracta d'un valor que representa perfectament l'estadística. Un cop realitzar els canvis, ja disposàvem d'un conjunt de dades on podíem garantir la qualitat d'aquestes. Així doncs, hem començat a analitzar aquest.
 
@@ -768,10 +798,12 @@ La primera anàlisi que s'ha realitzat es basava en l'evolució dels tirs de cam
 
 El segon anàlisi consistia a avaluar quines variables presentaven una major importància en l'estil de joc de cada dècada a partir de les correlacions entre aquestes. Per aquest cas, hem utilitzat les estadístiques més bàsiques sobre el joc, com per exemple, els tirs encertats de qualsevol distància, assistències, rebots, entre altres. Primerament, hem comprovat que una part de les variables no presentaven una distribució normal. En conseqüència hem optat per un mètode no paramètric com és el cas de la correlació de Pearson. Així doncs, com a conclusió general, hem detallat com l'estil de joc dels equips evoluciona a partir d'un joc pràcticament basat en els tirs de dos fins a arribar a un estil de joc més tàctic a partir de la combinació del joc associatiu (assistències) amb els tirs de tres punts, donant-li importància als rebots i faltes personals.
 
-L'última anàlisi es basava en la creació d'un model que fos capaç de predir si un equip era capaç de classificar a playoffs segons les estadístiques que presentava sobre la temporada. (Falta acabar)
+L'última anàlisi es basava en la creació d'un model que fos capaç de predir si un equip era capaç de classificar a playoffs segons les estadístiques que presentava sobre la temporada. Hem fet un model per a cada època i un general i hem comprovat, al calcular les seves mesures i veure la seva corva ROC, que són bons models predictius. Després, hem analitzat el model general i hem vist que hi havia certes variables que eren bones predictores, com tenir una bona defensa, no perdre gaire pilotes o tenir un calendari més fàcil. 
 
-Finalment, podem dir que el conjunt de dades presentat ens permet assolir els objectius plantejats a l'inici d'aquesta pràctica. Si és cert que no tenim informació sobre les temporades inicials, així i tot, ens permet entendre com han evolucionat les diferents lligues segons les dècades a través de les estadístiques recollides. Hem pogut destacar diferents patrons en els estils de joc i la direcció que presenta l'estil de joc actual. És a dir, els equips estan deixant de banda els tirs de dos pels tirs de tres punts. Amb aquests s'obtenen una major puntuació, però presenten una major dificultat. Així i tot, podríem assumir que els equips estan optant per jugadors més tècnics i tiradors, en lloc d'optar per un joc físic per jugar a prop de la cistella.
+Finalment, podem dir que el conjunt de dades presentat ens permet assolir els objectius plantejats a l'inici d'aquesta pràctica. Tot i que és cert que no disposem de tota la informació sobre les temporades inicials, aquest estudi ens permet entendre com han evolucionat les diferents lligues segons les dècades a través de les estadístiques recollides. Hem pogut destacar diferents patrons en els estils de joc i la direcció que presenta l'estil de joc actual. És a dir, els equips estan deixant de banda els tirs de dos pels tirs de tres punts. Amb aquests s'obtenen una major puntuació, però presenten una major dificultat. Així i tot, podríem assumir que els equips estan optant per jugadors més tècnics i tiradors, en lloc d'optar per un joc físic per jugar a prop de la cistella.
 
 # Exercici 7: Codi.
+El codi de la pràctica es troba en l'arxiu R Markdown `PRA2cmtorroxrocaca.Rmd` pujat al GitHub. No el reproduïm aquí per falta d'espai. 
 
 # Exercici 8: Vídeo.
+L'enllaç al vídeo es troba a FFFFFFFFFFF
