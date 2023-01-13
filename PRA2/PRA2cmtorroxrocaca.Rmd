@@ -758,9 +758,19 @@ COMENTARIS MODELS!
 
 
 
-# Exercici 5: Representació dels resultats.
-
 # Exercici 6: Resolució del problema.
+
+El conjunt de dades que presentem es basa en desenes de mètriques estadístiques sobre les temporades de l'NBA i de la WNBA. Aquestes es van recollir durant la primera pràctica a partir de l'ús de tècniques de web scrapping. Aquest conjunt presenta 1900 observacions i 53 variables. En aquest, podem trobar des d'estadístiques bàsiques fins a altres més complexes sobre el joc d'un equip durant la temporada regular.
+
+Un cop hem començat a analitzar el conjunt de dades, hem trobat que a partir de la temporada 1973-74 enrere no trobem els registres sobre estadístiques dels equips. Per tant, ens dificulta la seva anàlisi per falta d'informació. Així doncs, hem descartat aquestes temporades. Un altre fet a tenir en compte, és que els tirs de tres punts no s'inclou fins als anys 1979. Això no suposa un problema, ja que podem omplir els valors buits amb el valor 0, perquè es tracta d'un valor que representa perfectament l'estadística. Un cop realitzar els canvis, ja disposàvem d'un conjunt de dades on podíem garantir la qualitat d'aquestes. Així doncs, hem començat a analitzar aquest.
+
+La primera anàlisi que s'ha realitzat es basava en l'evolució dels tirs de camp, fent èmfasis en els tirs de tres punts. En el conjunt, disposem d'una estadística _fg3a_per_fga_pct_ que ens permet recollir el percentatge de tirs intentats des de la distància de tres punts segons el total de tirs intentats. Així doncs, podíem veure a partir de les dades si el tir de tres punts prenia importància segons el pas de les dècades. Hem utilitzat mètodes estadístics com el test de Welch, que és una alternativa a l'ANOVA clàssic quan no hi ha homoscedasticitat i finalment, el test de Games-Howell per acabar de veure les diferències significatives entre tots els grups. Els resultats obtinguts han estat similars als resultats obtinguts en un inici amb la representació visual de la variable.
+
+El segon anàlisi consistia a avaluar quines variables presentaven una major importància en l'estil de joc de cada dècada a partir de les correlacions entre aquestes. Per aquest cas, hem utilitzat les estadístiques més bàsiques sobre el joc, com per exemple, els tirs encertats de qualsevol distància, assistències, rebots, entre altres. Primerament, hem comprovat que una part de les variables no presentaven una distribució normal. En conseqüència hem optat per un mètode no paramètric com és el cas de la correlació de Pearson. Així doncs, com a conclusió general, hem detallat com l'estil de joc dels equips evoluciona a partir d'un joc pràcticament basat en els tirs de dos fins a arribar a un estil de joc més tàctic a partir de la combinació del joc associatiu (assistències) amb els tirs de tres punts, donant-li importància als rebots i faltes personals.
+
+L'última anàlisi es basava en la creació d'un model que fos capaç de predir si un equip era capaç de classificar a playoffs segons les estadístiques que presentava sobre la temporada. (Falta acabar)
+
+Finalment, podem dir que el conjunt de dades presentat ens permet assolir els objectius plantejats a l'inici d'aquesta pràctica. Si és cert que no tenim informació sobre les temporades inicials, així i tot, ens permet entendre com han evolucionat les diferents lligues segons les dècades a través de les estadístiques recollides. Hem pogut destacar diferents patrons en els estils de joc i la direcció que presenta l'estil de joc actual. És a dir, els equips estan deixant de banda els tirs de dos pels tirs de tres punts. Amb aquests s'obtenen una major puntuació, però presenten una major dificultat. Així i tot, podríem assumir que els equips estan optant per jugadors més tècnics i tiradors, en lloc d'optar per un joc físic per jugar a prop de la cistella.
 
 # Exercici 7: Codi.
 
