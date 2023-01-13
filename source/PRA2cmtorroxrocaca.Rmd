@@ -817,7 +817,8 @@ El fitxer CSV amb les dades utilitzades s'anomena NBA_WNBA_PRA2.csv i es troba a
 
 ```{r}
 # Agafem les variables:
-dfCSV <- df %>% select(Playoffs, win_loss_pct, fg, fg2, fg3, ft, pf, vars)
+dfCSV <- df %>% filter(decade != "Pre-three era")
+dfCSV <- dfCSV %>% select(Season, League, Team, Playoffs, win_loss_pct, fg, fg2, fg3, ft, pf, vars)
 
 # Ho guardem en un dataset:
 write.csv(dfCSV, "../dataset/NBA_WNBA_PRA2.csv")
