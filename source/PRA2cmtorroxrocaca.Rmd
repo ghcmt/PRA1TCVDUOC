@@ -811,17 +811,6 @@ El codi de la pràctica es troba en l'arxiu R Markdown 'PRA2cmtorroxrocaca.Rmd' 
 # Exercici 8: Vídeo.
 L'enllaç al vídeo es troba aquí: https://drive.google.com/file/d/1nIOK3WWEip6KktFsJo3WuuQ3iUHBh-sv/view?usp=share_link . 
 
-# Taula de contribucions
-```{r}
-contribs <- c("Investigació prèvia", "Redacció de les respostes", "Desenvolupament del codi", "Participació al vídeo")
-parts <- rep(c("Carlos Martínez Torró, Xavier Roca Canals"), 4)
-
-contDF <- data.frame(conts = contribs, partic = parts)
-
-kable(contDF, booktabs = TRUE, caption = "Taula de Contribucions", 
-      col.names = c("Contribucions", "Signatura")) %>% 
-  kable_styling(latex_options = c("striped", "hold_position"))
-```
 
 # Generació de CSV amb les dades utilitzades
 El fitxer CSV amb les dades utilitzades s'anomena NBA_WNBA_PRA2.csv i es troba a la carpeta _dataset_ del nostre Github. 
@@ -834,3 +823,16 @@ dfCSV <- df %>% select(Playoffs, win_loss_pct, fg, fg2, fg3, ft, pf, vars)
 write.csv(dfCSV, "../dataset/NBA_WNBA_PRA2.csv")
 ```
 
+\newpage
+
+# Taula de contribucions
+A continuació afegim la taula de contribucions a la pràctica:
+
+```{r}
+contribs <- c("Investigació prèvia", "Redacció de les respostes", "Desenvolupament del codi", "Participació al vídeo")
+parts <- rep(c("Carlos Martínez Torró, Xavier Roca Canals"), 4)
+
+contDF <- data.frame(conts = contribs, partic = parts)
+
+kable(contDF)
+```

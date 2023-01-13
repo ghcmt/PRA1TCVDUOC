@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.4)  13 JAN 2023 21:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.4)  13 JAN 2023 21:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -641,30 +641,26 @@ File: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf Graphic file 
 <use PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf>
 Package pdftex.def Info: PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf  used on input line 991.
 (pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
-[15 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-31-1.pdf>] [16 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf>] [17]
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[18] [19] (./PRA2cmtorroxrocaca.aux)
+[15 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-31-1.pdf>] [16 <./PRA2cmtorroxrocaca_files/figure-latex/unnamed-chunk-32-1.pdf>] [17] [18] [19] (./PRA2cmtorroxrocaca.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `PRA2cmtorroxrocaca.out' has not changed.
-(rerunfilecheck)             Checksum: B753E4E96431489CEF9E2B5C4BAAF0B5;4144.
+(rerunfilecheck)             Checksum: 57A17293CE725355E584D4E4A9B74A07;4144.
  ) 
 Here is how much of TeX's memory you used:
- 12517 strings out of 478053
- 205481 string characters out of 5838817
+ 12515 strings out of 478053
+ 205451 string characters out of 5838817
  1865787 words of memory out of 5000000
- 32296 multiletter control sequences out of 15000+600000
+ 32295 multiletter control sequences out of 15000+600000
  565623 words of font info for 75 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  72i,10n,77p,699b,582s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}<c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on PRA2cmtorroxrocaca.pdf (19 pages, 342970 bytes).
+Output written on PRA2cmtorroxrocaca.pdf (19 pages, 342943 bytes).
 PDF statistics:
- 353 PDF objects out of 1000 (max. 8388607)
- 296 compressed objects within 3 object streams
- 95 named destinations out of 1000 (max. 500000)
+ 352 PDF objects out of 1000 (max. 8388607)
+ 295 compressed objects within 3 object streams
+ 94 named destinations out of 1000 (max. 500000)
  166 words of extra memory for PDF output out of 10000 (max. 10000000)
 
